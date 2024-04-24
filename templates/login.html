@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>login</title>
+    <link rel="stylesheet"
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+      integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+      crossorigin="anonymous">
+    <link
+      href="https://fonts.googleapis.com/css2?family=Rubik+80s+Fade&family=Rubik+Doodle+Triangles&display=swap"
+      rel="stylesheet">
+    <link rel="preconnect"
+      href="https://fonts.googleapis.com">
+    <link rel="preconnect"
+      href="https://fonts.gstatic.com"
+      crossorigin>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Genos:ital,wght@1,500&display=swap"
+      rel="stylesheet">
+    <!-- google fonts -->
+    <link rel="preconnect"
+      href="https://fonts.googleapis.com">
+    <link rel="preconnect"
+      href="https://fonts.gstatic.com"
+      crossorigin>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Lobster&display=swap"
+      rel="stylesheet">
+
+</head>
+<body>
+
+    
+    <div class="mt-4">
+        <form action="/login" method="POST">
+        <section class="vh-100 gradient-custom" ">
+            <div class="container py-5 h-100" >
+              <div class="row d-flex justify-content-center align-items-center h-100">
+                <div class="col-12 col-md-8 col-lg-6 col-xl-5">
+                  <div class="card bg-dark text-white" style="border-radius: 1rem;">
+                    <div class="card-body text-center">
+          
+                      <div>
+          
+                        <h2 class="fw-bold mb-2 text-uppercase">Login</h2>
+                        <p class="text-white-50 mb-5">Please enter your login and password!</p>
+          
+                        <div class="form-outline form-white mb-4">
+                            <input type="text" id="username" name="username" class="form-control form-control-lg" />
+                            <label  for="username" style="display: flex;">User Name</label>
+                          </div>
+            
+                        <div class="form-outline form-white mb-4">
+                          <input type="email" id="email" class="form-control form-control-lg" name="email"/>
+                          <label  for="email" style="display: flex;">Email</label>
+                        </div>
+          
+                        <div class="form-outline form-white mb-4">
+                          <input type="password" id="password" class="form-control form-control-lg" name="password"/>
+                          <label style="display: flex;" for="password">Password</label>
+                        </div>
+          
+                        <p class="small mb-5 pb-lg-2"><a class="text-white-50" href="#!">Forgot password?</a></p>
+                        {% if error %}
+                        <div class="alert alert-danger" role="alert">
+                            {{ error }}
+                        </div>
+                        {% endif %}
+                        <button class="btn btn-outline-light btn-lg px-5" type="submit">Login</button>  
+                      </div>
+                      <div>
+                        <p class="mt-4">Don't have an account? <a href="/signup" class="text-white-50 fw-bold">Sign Up</a>
+                        </p>
+                      </div>
+          
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+        </form>
+    </div>
+</body>
+</html>

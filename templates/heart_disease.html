@@ -1,0 +1,89 @@
+<head><link rel="stylesheet" href="style.css">
+</head>
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="container">
+    <h1 style="text-align: center; margin-bottom: 20px;">Heart Disease Prediction</h1>
+    <form method="POST" style="max-width: 500px; margin: 0 auto;" id="heartForm">
+        <div class="form-group">
+            <label for="age">Age:</label>
+            <input type="text" id="age" name="age" class="form-control">
+        </div>
+        <div class="form-group">
+            <label for="sex">Sex:</label>
+            <input type="text" id="sex" name="sex" class="form-control" placeholder="Enter 1(male) or 0(female)">
+        </div>
+        <div class="form-group">
+            <label for="cp">Chest Pain Type:</label>
+            <input type="text" id="cp" name="cp" class="form-control">
+        </div>
+        <div class="form-group">
+            <label for="trestbps">Resting Blood Pressure (mm Hg):</label>
+            <input type="text" id="trestbps" name="trestbps" class="form-control">
+        </div>
+        <div class="form-group">
+            <label for="chol">Serum Cholesterol (mg/dL):</label>
+            <input type="text" id="chol" name="chol" class="form-control">
+        </div>
+        <div class="form-group">
+            <label for="fbs">Fasting Blood Sugar (mg/dL):</label>
+            <input type="text" id="fbs" name="fbs" class="form-control">
+        </div>
+        <div class="form-group">
+            <label for="restecg">Resting Electrocardiographic Results:</label>
+            <input type="text" id="restecg" name="restecg" class="form-control">
+        </div>
+        <div class="form-group">
+            <label for="thalach">Maximum Heart Rate achieved:</label>
+            <input type="text" id="thalach" name="thalach" class="form-control">
+        </div>
+        <div class="form-group">
+            <label for="exang">Exercise Induced Angina:</label>
+            <input type="text" id="exang" name="exang" class="form-control">
+        </div>
+        <div class="form-group">
+            <label for="oldpeak">ST depression induced by exercise:</label>
+            <input type="text" id="oldpeak" name="oldpeak" class="form-control">
+        </div>
+        <div class="form-group">
+            <label for="slope">Slope of the peak exercise ST segment:</label>
+            <input type="text" id="slope" name="slope" class="form-control">
+        </div>
+        <div class="form-group">
+            <label for="ca">Major vessels colored by flourosopy:</label>
+            <input type="text" id="ca" name="ca" class="form-control">
+        </div>
+        <div class="form-group">
+            <label for="thal">Thal:</label>
+            <input type="text" id="thal" name="thal" class="form-control">
+        </div>
+
+        <button type="submit" class="btn btn-primary">Predict</button>
+    </form>
+</div>
+{% if result %}
+    <div class="result-container" style="margin-top: 20px; text-align: center;">
+        <p class="result-text">{{ result }}</p>
+    </div>
+    {% endif %}
+      
+<script>
+    document.getElementById("heartForm").addEventListener("submit", function(event) {
+        var formValid = true;
+        var formFields = this.elements;
+        
+        for (var i = 0; i < formFields.length; i++) {
+            if (formFields[i].type === "text" && formFields[i].value.trim() === "") {
+                formValid = false;
+                break;
+            }
+        }
+
+        if (!formValid) {
+            alert("Please fill in all fields.");
+            event.preventDefault(); // Prevent form submission
+        }
+    });
+</script>
+{% endblock %}

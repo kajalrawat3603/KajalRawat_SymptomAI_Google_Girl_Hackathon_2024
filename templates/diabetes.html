@@ -1,0 +1,66 @@
+{% extends "layout.html" %}
+{% block content %}
+<div class="container">
+    <h1 style="text-align: center; margin-bottom: 20px;">Diabetes Prediction</h1>
+    <form method="POST" style="max-width: 500px; margin: 0 auto;" id="diabetesForm">
+        <div class="form-group">
+            <label for="Pregnancies">Number of Pregnancies:</label>
+            <input type="text" id="Pregnancies" name="Pregnancies" class="form-control">
+        </div>
+        <div class="form-group">
+            <label for="Glucose">Glucose Level:</label>
+            <input type="text" id="Glucose" name="Glucose" class="form-control">
+        </div>
+        <div class="form-group">
+            <label for="BloodPressure">Blood Pressure value:</label>
+            <input type="text" id="BloodPressure" name="BloodPressure" class="form-control">
+        </div>
+        <div class="form-group">
+            <label for="SkinThickness">Skin Thickness value:</label>
+            <input type="text" id="SkinThickness" name="SkinThickness" class="form-control">
+        </div>
+        <div class="form-group">
+            <label for="Insulin">Insulin Level:</label>
+            <input type="text" id="Insulin" name="Insulin" class="form-control">
+        </div>
+        <div class="form-group">
+            <label for="BMI">BMI value:</label>
+            <input type="text" id="BMI" name="BMI" class="form-control">
+        </div>
+        <div class="form-group">
+            <label for="DiabetesPedigreeFunction">Diabetes Pedigree Function value:</label>
+            <input type="text" id="DiabetesPedigreeFunction" name="DiabetesPedigreeFunction" class="form-control">
+        </div>
+        <div class="form-group">
+            <label for="Age">Age of the Person:</label>
+            <input type="text" id="Age" name="Age" class="form-control">
+        </div>
+
+        <button type="submit" class="btn btn-primary">Predict</button>
+    </form>
+</div>
+{% if result %}
+<div class="result-container" style="margin-top: 20px; text-align: center;">
+    <p class="result-text">{{ result }}</p>
+</div>
+{% endif %}
+  
+<script>
+    document.getElementById("diabetesForm").addEventListener("submit", function(event) {
+        var formValid = true;
+        var formFields = this.elements;
+        
+        for (var i = 0; i < formFields.length; i++) {
+            if (formFields[i].type === "text" && formFields[i].value.trim() === "") {
+                formValid = false;
+                break;
+            }
+        }
+
+        if (!formValid) {
+            alert("Please fill in all fields.");
+            event.preventDefault(); // Prevent form submission
+        }
+    });
+</script>
+{% endblock %}
