@@ -38,7 +38,7 @@ This web application helps users to predict potential diseases based on symptoms
 2. Navigate to the project directory:
 
     ```bash
-    cd medical-diagnosis-web-app
+    cd KajalRawat_SymptomAI_Google_Girl_Hackathon_2024
     ```
 
 3. Install the required dependencies using pip:
