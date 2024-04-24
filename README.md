@@ -32,7 +32,7 @@ This web application helps users to predict potential diseases based on symptoms
 1. Clone the repository to your local machine:
 
     ```bash
-    git clone https://github.com/yourusername/medical-diagnosis-web-app.git
+    git clone https://github.com/kajalrawat3603/KajalRawat_SymptomAI_Google_Girl_Hackathon_2024.git
     ```
 
 2. Navigate to the project directory:
