@@ -1,4 +1,4 @@
-# Medical Diagnosis Web Application
+# SymptomAI: Medical Diagnosis Web Application
 
 This web application helps users to predict potential diseases based on symptoms they input. It utilizes machine learning models to make predictions for diabetes, heart disease, and Parkinson's disease. Additionally, users can sign up, log in, and provide symptoms for diagnosis.
 
