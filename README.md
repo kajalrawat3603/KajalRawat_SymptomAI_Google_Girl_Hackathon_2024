@@ -24,7 +24,7 @@ This web application helps users to predict potential diseases based on symptoms
 
 1. Clone the repository.
 2. Install the required dependencies using `pip install -r requirements.txt`.
-3. Run the application using `python app.py`.
+3. Run the application using `python run.py`.
 4. Access the application in your web browser at [http://localhost:5000](http://localhost:5000).
 
 ## Steps to Run the Application
