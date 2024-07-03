@@ -1,9 +1,10 @@
 {% extends "layout.html" %}
 {% block content %}
-<div class="container">
     <h1 style="text-align: center; margin-bottom: 20px;">Diabetes Prediction</h1>
-    <form method="POST" style="max-width: 500px; margin: 0 auto;" id="diabetesForm">
-        <div class="form-group">
+    <div class="container" style="grid-template-columns: [one]100%;">
+    <form method="POST" id="diabetesForm">
+        <div class="labels-container" style="width: 100%;">
+        <div class="form-group" >
             <label for="Pregnancies">Number of Pregnancies:</label>
             <input type="text" id="Pregnancies" name="Pregnancies" class="form-control">
         </div>
@@ -35,16 +36,16 @@
             <label for="Age">Age of the Person:</label>
             <input type="text" id="Age" name="Age" class="form-control">
         </div>
-
+        </div>
         <button type="submit" class="btn btn-primary">Predict</button>
     </form>
-</div>
+    </div>
 {% if result %}
 <div class="result-container" style="margin-top: 20px; text-align: center;">
     <p class="result-text">{{ result }}</p>
 </div>
 {% endif %}
-  
+
 <script>
     document.getElementById("diabetesForm").addEventListener("submit", function(event) {
         var formValid = true;

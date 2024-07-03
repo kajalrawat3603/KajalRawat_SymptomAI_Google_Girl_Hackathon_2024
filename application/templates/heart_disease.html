@@ -3,9 +3,10 @@
 {% extends "layout.html" %}
 
 {% block content %}
-<div class="container">
     <h1 style="text-align: center; margin-bottom: 20px;">Heart Disease Prediction</h1>
-    <form method="POST" style="max-width: 500px; margin: 0 auto;" id="heartForm">
+    <div class="container" style="grid-template-columns: [one]100%;">
+    <form method="POST" id="heartForm">
+        <div class="labels-container" style="width: 100%;">
         <div class="form-group">
             <label for="age">Age:</label>
             <input type="text" id="age" name="age" class="form-control">
@@ -58,7 +59,7 @@
             <label for="thal">Thal:</label>
             <input type="text" id="thal" name="thal" class="form-control">
         </div>
-
+    </div>
         <button type="submit" class="btn btn-primary">Predict</button>
     </form>
 </div>

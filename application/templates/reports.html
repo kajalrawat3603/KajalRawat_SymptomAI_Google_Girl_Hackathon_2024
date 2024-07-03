@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Reports</title>
+    <link rel='stylesheet' href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    {% extends "layout.html" %}
+    {% block content %}
+    <h1>User Reports</h1>
+    <table class="tablecontainer">
+        <tr>
+            <th colspan="2">Date</th>
+            <th colspan="2">Report Name</th>
+            <th colspan="2">Report Type</th>
+            <th colspan="2">Action</th>
+        </tr>
+        {% for report in reports %}
+        <tr>
+            <td colspan="2">{{ report[1] }}</td> 
+            <td colspan="2">Report {{ report[0] }}</td>
+            <td colspan="2">{{ report[2] }}</td>
+            <td colspan="2"><a href="{{ url_for('download_report', report_id=report[0]) }}">Download</a></td>
+        </tr>
+        {% endfor %}
+    </table>
+    {% endblock %}
+</body>
+</html>
