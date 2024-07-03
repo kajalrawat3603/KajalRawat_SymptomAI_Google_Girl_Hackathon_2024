@@ -1,44 +1,75 @@
-from flask import  render_template, flash,request, redirect, url_for, send_file, session,Flask
+import io
+import re
+from flask import render_template, flash, request, redirect, url_for, send_file, session
 from werkzeug.utils import secure_filename
 import os
-from application import app
 import secrets
-from flask import session
-import os
-import pickle
 import sqlite3
+from datetime import datetime
+from fpdf import FPDF
 import pandas as pd
 from joblib import load
 from sklearn.preprocessing import LabelEncoder
+import pickle
+from functools import wraps
+from io import BytesIO
+from application import app
+from application import utils
+from werkzeug.security import generate_password_hash, check_password_hash
+from reportlab.lib.pagesizes import letter
+from reportlab.pdfgen import canvas
+from io import BytesIO
 
 secret_key = secrets.token_hex(16)
 
 print("Generated Secret Key:", secret_key)
 app.secret_key = secret_key
 
+@app.before_request
+def before_request():
+    session.modified = True
+
+# Routes for signup, login, logout, and index
 @app.route("/", methods=["POST", "GET"])
 def index():
     return render_template("index.html")
 
-
-# Function to create or connect to the database
-def create_db():
+# Function to create or connect to the users database
+def create_users_db():
     conn = sqlite3.connect('users.db')
     cursor = conn.cursor()
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS users (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-            username TEXT,
-            email TEXT,
-            password TEXT
-        )
+            username TEXT NOT NULL UNIQUE,
+            email TEXT NOT NULL UNIQUE,
+            password TEXT NOT NULL
+        );
     ''')
     conn.commit()
     conn.close()
 
-# Create the database on app startup
-create_db()
+# Function to create or connect to the reports database
+def create_reports_db():
+    conn = sqlite3.connect('reports.db')
+    cursor = conn.cursor()
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS reports (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER NOT NULL,
+            report_type TEXT NOT NULL,
+            report_data BLOB NOT NULL,
+            time TEXT,
+            FOREIGN KEY (user_id) REFERENCES users (id)
+        );
+    ''')
+    conn.commit()
+    conn.close()
 
+create_users_db()
+create_reports_db()
+
+# Function to insert a user into the users database
 def insert_user(username, email, password):
     conn = sqlite3.connect('users.db')
     cursor = conn.cursor()
@@ -46,9 +77,90 @@ def insert_user(username, email, password):
     conn.commit()
     conn.close()
 
+def insert_report(user_id, report_type, report_data):
+    conn = sqlite3.connect('reports.db')
+    cursor = conn.cursor()
+    current_datetime = datetime.now().isoformat()
+    cursor.execute('INSERT INTO reports (user_id, report_type, report_data, time) VALUES (?, ?, ?, ?)',
+                   (user_id, report_type, report_data, current_datetime))
+    conn.commit()
+    conn.close()
+
+def generate_report(user_id, report_type, result, user_data):
+    logo_path = "application/static/images/logo.png"
+    pdf_buffer = BytesIO()
+    c = canvas.Canvas(pdf_buffer, pagesize=letter)
+    page_width, page_height = letter
+    title_height = 60
+    title_y = page_height - title_height
+    
+    c.setFillColorRGB(245, 245, 245)
+    c.rect(0, title_y, page_width, title_height, fill=True)
+    
+    c.setFillColorRGB(0.02, 0.02, 0.42)
+    c.setFont("Helvetica-Bold", 24)
+    title_text = "symptomAI Report"
+    title_text_width = c.stringWidth(title_text, "Helvetica-Bold", 24)
+    title_text_x = (page_width - title_text_width) / 2
+    title_text_y = title_y + (title_height - 24) / 2 
+    c.drawString(title_text_x, title_text_y, title_text)
+    logo_x = 20  
+    logo_y = title_y + (title_height - 40) / 2
+    c.drawImage(logo_path, logo_x, logo_y, width=40, height=40, mask='auto')
+    
+    c.setFont("Helvetica-Bold", 16)
+    c.setFillColorRGB(0, 0, 0) 
+    c.drawString(100, 700, f"Report Type: {report_type}")
+
+    c.setFont("Helvetica", 12)
+    y_position = 675
+    for label, value in user_data.items():
+        c.drawString(100, y_position, f"{label}: {value}")
+        y_position -= 15
+    
+    c.setFont("Helvetica-Bold", 14)
+    y_position -= 20
+    c.drawString(100, y_position, "Result:")
+    y_position -= 15
+    c.drawString(100, y_position, result)
+    
+    c.showPage()
+    c.save()
+    
+    pdf_buffer.seek(0)
+    pdf_data = pdf_buffer.read()
+    
+    insert_report(user_id, report_type, pdf_data)
 
 
-# Create the users table when the application starts
+# Function to require login for specific routes
+def login_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if 'user_id' not in session:
+            return redirect(url_for('login'))
+        return f(*args, **kwargs)
+    return decorated_function
+
+# Load machine learning models and data
+diabetes_model = pickle.load(open("application/Models/diabetes_model.h5", "rb"))
+heart_disease_model = pickle.load(open("application/Models/heart_disease_model.h5", "rb"))
+parkinsons_model = pickle.load(open("application/Models/parkinsons_model.h5", "rb"))
+svm_model = load('application/Models/disease_symptom.joblib')
+df_precautions = pd.read_csv('application/Datasets/symptom/symptom_precaution.csv')
+df_description = pd.read_csv('application/Datasets/symptom/symptom_Description.csv')
+df_severity = pd.read_csv('application/Datasets/symptom/symptom_severity.csv')
+label_encoder = LabelEncoder()
+label_encoder.fit(df_precautions['Disease'])
+
+
+def insert_user(username, email, password):
+    hashed_password = generate_password_hash(password)
+    conn = sqlite3.connect('users.db')
+    cursor = conn.cursor()
+    cursor.execute('INSERT INTO users (username, email, password) VALUES (?, ?, ?)', (username, email, hashed_password))
+    conn.commit()
+    conn.close()
 
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
@@ -57,276 +169,249 @@ def signup():
         email = request.form['email']
         password = request.form['password']
         confirm_password = request.form['confirm_password']
-        # Check if passwords match
+
+        if len(username) < 3 or len(username) > 25:
+            flash('Username must be between 3 and 25 characters long', 'danger')
+            return redirect(url_for('signup'))
+
+        email_regex = r'^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$'
+        if not re.match(email_regex, email):
+            flash('Invalid email address', 'danger')
+            return redirect(url_for('signup'))
+
+        if len(password) < 8:
+            flash('Password must be at least 8 characters long', 'danger')
+            return redirect(url_for('signup'))
+
         if password != confirm_password:
-            return 'Passwords do not match'
+            flash('Passwords do not match', 'danger')
+            return redirect(url_for('signup'))
+
         conn = sqlite3.connect('users.db')
         cursor = conn.cursor()
+
         cursor.execute('SELECT * FROM users WHERE username = ?', (username,))
         existing_user = cursor.fetchone()
         if existing_user:
             conn.close()
-            return 'Username already exists'
-        # Add user to the database
-        insert_user(username, email,password)
+            flash('Username already exists', 'danger')
+            return redirect(url_for('signup'))
+
+        cursor.execute('SELECT * FROM users WHERE email = ?', (email,))
+        existing_email = cursor.fetchone()
+        if existing_email:
+            conn.close()
+            flash('Email already associated with an account', 'danger')
+            return redirect(url_for('signup'))
+
+        hashed_password = generate_password_hash(password)
+        cursor.execute('INSERT INTO users (username, email, password) VALUES (?, ?, ?)', (username, email, hashed_password))
+        conn.commit()
         conn.close()
+
         flash('Signup successful', 'success')
-        return render_template("index.html")
+        return redirect(url_for('login'))
+
     return render_template('signup.html')
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-    error = None
     if request.method == 'POST':
         username = request.form['username']
+        email = request.form['email']
         password = request.form['password']
+
         conn = sqlite3.connect('users.db')
         cursor = conn.cursor()
-        cursor.execute('SELECT * FROM users WHERE username = ? AND password = ?', (username, password))
+        cursor.execute('SELECT id, password FROM users WHERE username = ? AND email = ?', (username, email))
         user = cursor.fetchone()
         conn.close()
-        if user:
-            # If user exists, redirect to home page or any other page
+
+        if user and check_password_hash(user[1], password):
+            session['user_id'] = user[0]
+            session.permanent = True
             return redirect(url_for('index'))
         else:
-            # If user does not exist, render the login form again with an error message
-            error = 'Invalid username or password'
-    return render_template('login.html', error=error)
+            flash('Invalid username/email or password', 'danger')
+            return redirect(url_for('login'))
 
+    return render_template('login.html')
 
-diabetes_model = pickle.load(open("application/Models/diabetes_model.h5", "rb"))
-heart_disease_model = pickle.load(open("application/Models/heart_disease_model.h5", "rb"))
-parkinsons_model = pickle.load(open("application/Models/parkinsons_model.h5", "rb"))
-svm_model = load('application/Models/disease_symptom.joblib')
-# Load the dataset and other necessary files
-df_precautions = pd.read_csv('application/Datasets/symptom/symptom_precaution.csv')
-df_description = pd.read_csv('application/Datasets/symptom/symptom_Description.csv')
-df_severity = pd.read_csv('application/Datasets/symptom/symptom_severity.csv')
-
-from sklearn.preprocessing import LabelEncoder
-
-# Initialize label encoder
-label_encoder = LabelEncoder()
-
-# Fit the LabelEncoder with all possible categories
-label_encoder.fit(df_precautions['Disease'])
-@app.route('/symptoms', methods=['POST', 'GET'])
-def symptoms():
-    if request.method == 'POST':
-        symptoms = [0] * 17 
-        
-        # Get the symptoms from the form and update the input list accordingly
-        symptom_keys = ['itching', 'skin_rash', 'nodal_skin_eruptions',         'continuous_sneezing', 'shivering', 'chills',
-                        'joint_pain', 'stomach_pain', 'acidity', 'ulcers_on_tongue', 'muscle_wasting', 'vomiting',
-                        'burning_micturition', 'spotting_urination', 'fatigue', 'weight_gain', 'anxiety']
-        
-        symptom_weights = {
-            'itching': 1,
-            'skin_rash': 3,
-            'nodal_skin_eruptions': 4,
-            'continuous_sneezing': 4,
-            'shivering': 5,
-            'chills': 3,
-            'joint_pain': 3,
-            'stomach_pain': 5,
-            'acidity': 3,
-            'ulcers_on_tongue': 4,
-            'muscle_wasting': 3,
-            'vomiting': 5,
-            'burning_micturition': 6,
-            'spotting_urination': 6,
-            'fatigue': 4,
-            'weight_gain': 3,
-            'anxiety': 4,
-            'cold_hands_and_feets': 5,
-            'mood_swings': 3,
-            'weight_loss': 3,
-            'restlessness': 5,
-            'lethargy': 2,
-            'patches_in_throat': 6,
-            'irregular_sugar_level': 5,
-            'cough': 4,
-            'high_fever': 7,
-            'sunken_eyes': 3,
-            'breathlessness': 4,
-            'sweating': 3,
-            'dehydration': 4,
-            'indigestion': 5,
-            'headache': 3,
-            'yellowish_skin': 3,
-            'dark_urine': 4,
-            'nausea': 5,
-            'loss_of_appetite': 4,
-            'pain_behind_the_eyes': 4,
-            'back_pain': 3,
-            'constipation': 4,
-            'abdominal_pain': 4,
-            'diarrhoea': 6,
-            'mild_fever': 5,
-            'yellow_urine': 4,
-            'yellowing_of_eyes': 4,
-            'acute_liver_failure': 6,
-            'fluid_overload': 6,
-            'swelling_of_stomach': 7,
-            'swelled_lymph_nodes': 6,
-            'malaise': 6,
-            'blurred_and_distorted_vision': 5,
-            'phlegm': 5,
-            'throat_irritation': 4,
-            'redness_of_eyes': 5,
-            'sinus_pressure': 4,
-            'runny_nose': 5,
-            'congestion': 5,
-            'chest_pain': 7,
-            'weakness_in_limbs': 7,
-            'fast_heart_rate': 5,
-            'pain_during_bowel_movements': 5,
-            'pain_in_anal_region': 6,
-            'bloody_stool': 5,
-            'irritation_in_anus': 6,
-            'neck_pain': 5,
-            'dizziness': 4,
-            'cramps': 4,
-            'bruising': 4,
-            'obesity': 4,
-            'swollen_legs': 5,
-            'swollen_blood_vessels': 5,
-            'puffy_face_and_eyes': 5,
-            'enlarged_thyroid': 6,
-            'brittle_nails': 5,
-            'swollen_extremeties': 5,
-            'excessive_hunger': 4,
-            'extra_marital_contacts': 5,
-            'drying_and_tingling_lips': 4,
-            'slurred_speech': 4,
-            'knee_pain': 3,
-            'hip_joint_pain': 2,
-            'muscle_weakness': 2,
-            'stiff_neck': 4,
-            'swelling_joints': 5,
-            'movement_stiffness': 5,
-            'spinning_movements': 6,
-            'loss_of_balance': 4,
-            'unsteadiness': 4,
-            'weakness_of_one_body_side': 4,
-            'loss_of_smell': 3,
-            'bladder_discomfort': 4,
-            'foul_smell_ofurine': 5,
-            'continuous_feel_of_urine': 6,
-            'passage_of_gases': 5,
-            'internal_itching': 4,
-            'toxic_look_(typhos)': 5,
-            'depression': 3,
-            'irritability': 2,
-            'muscle_pain': 2,
-            'altered_sensorium': 2,
-            'red_spots_over_body': 3,
-            'belly_pain': 4,
-            'abnormal_menstruation': 6,
-            'dischromic_patches': 6,
-            'watering_from_eyes': 4,
-            'increased_appetite': 5,
-            'polyuria': 4,
-            'family_history': 5,
-            'mucoid_sputum': 4,
-            'rusty_sputum': 4,
-            'lack_of_concentration': 3,
-            'visual_disturbances': 3,
-            'receiving_blood_transfusion': 5,
-            'receiving_unsterile_injections': 2,
-            'coma': 7,
-            'stomach_bleeding': 6,
-            'distention_of_abdomen': 4,
-            'history_of_alcohol_consumption': 5,
-            'blood_in_sputum': 5,
-            'prominent_veins_on_calf': 6,
-            'palpitations': 4,
-            'painful_walking': 2,
-            'pus_filled_pimples': 2,
-            'blackheads': 2,
-            'scurring': 2,
-            'skin_peeling': 3,
-            'silver_like_dusting': 2,
-            'small_dents_in_nails': 2,
-            'inflammatory_nails': 2,
-            'blister': 4,
-            'red_sore_around_nose': 2,
-            'yellow_crust_ooze': 3,
-            'prognosis': 5
-        }
-
-        for i, key in enumerate(symptom_keys):
-            if request.form.get(key):
-                symptoms[i] = symptom_weights[key]
-        
-        # Call the model to predict the disease using the symptoms
-        input_data = [symptoms]
-        predictions = svm_model.predict(input_data)
-        predicted_disease_names = label_encoder.inverse_transform(predictions)
-        precautions_list = []
-        descriptions_list = []
-
-        for disease_name in predicted_disease_names:
-            precautions_row = df_precautions[df_precautions['Disease'] == disease_name].iloc[:, 1:].values.tolist()[0]
-            precautions_list.append(precautions_row)
-            description = df_description[df_description['Disease'] == disease_name]['Description'].values[0]
-            
-            descriptions_list.append(description)
-
-        return render_template('symptoms.html', predicted_diseases=predicted_disease_names, precautions=precautions_list, descriptions=descriptions_list)
-    return render_template('symptoms.html')
-    
-    
-    # Fetch additional information for the predicted disease
-    
-
-
+@app.route('/logout')
+def logout():
+    session.pop('user_id', None)
+    session.logged_in=False
+    return redirect(url_for('login'))
 
 @app.route('/test', methods=['GET', 'POST'])
 def test():
     return render_template('test.html')
 
 @app.route('/diabetes', methods=['GET', 'POST'])
+@login_required
 def diabetes():
     if request.method == 'POST':
-        # Get user input
-        user_input = [float(request.form[field]) for field in request.form]
-        # Make prediction
-        diab_prediction = diabetes_model.predict([user_input])
-        if diab_prediction[0] == 1:
-            result = 'The person is diabetic'
-        else:
-            result = 'The person is not diabetic'
+        user_id = session.get('user_id')
+        
+        labels = {
+            'Pregnancies': float(request.form['Pregnancies']),
+            'Glucose Level': float(request.form['Glucose']),
+            'Blood Pressure': float(request.form['BloodPressure']),
+            'Skin Thickness': float(request.form['SkinThickness']),
+            'Insulin Level': float(request.form['Insulin']),
+            'BMI': float(request.form['BMI']),
+            'Diabetes Pedigree Function': float(request.form['DiabetesPedigreeFunction']),
+            'Age': float(request.form['Age']),
+        }
+        diab_prediction = diabetes_model.predict([list(labels.values())])
+        result = 'The person is diabetic' if diab_prediction[0] == 1 else 'The person is not diabetic'
+        generate_report(user_id, 'Diabetes', result, labels)
+        
         return render_template('diabetes.html', result=result)
+    
     return render_template('diabetes.html')
 
+
+
 @app.route('/heart_disease', methods=['GET', 'POST'])
+@login_required
 def heart_disease():
     if request.method == 'POST':
-        # Get user input
-        user_input = [float(request.form[field]) for field in request.form]
-        # Make prediction
-        heart_prediction = heart_disease_model.predict([user_input])
-        if heart_prediction[0] == 1:
-            result = 'The person is having heart disease'
-        else:
-            result = 'The person does not have any heart disease'
+        user_id = session.get('user_id')
+        labels = {
+            'Age': float(request.form['age']),
+            'Sex (1:male and 0:female)': float(request.form['sex']),
+            'Chest Pain Type': float(request.form['cp']),
+            'Resting Blood Pressure (mm Hg)': float(request.form['trestbps']),
+            'Serum Cholesterol (mg/dL)': float(request.form['chol']),
+            'Fasting Blood Sugar (mg/dL)': float(request.form['fbs']),
+            'Resting Electrocardiographic Results': float(request.form['restecg']),
+            'Maximum Heart Rate achieved': float(request.form['thalach']),
+            'Exercise Induced Angina': float(request.form['exang']),
+            'ST depression induced by exercise': float(request.form['oldpeak']),
+            'Slope of the peak exercise ST segment': float(request.form['slope']),
+            'Major vessels colored by fluoroscopy': float(request.form['ca']),
+            'Thal': float(request.form['thal']),
+        }
+        heart_prediction = heart_disease_model.predict([list(labels.values())])
+        result = 'The person is having heart disease' if heart_prediction[0] == 1 else 'The person does not have any heart disease'
+        generate_report(user_id, 'Heart Disease', result, labels)
+        
         return render_template('heart_disease.html', result=result)
+    
     return render_template('heart_disease.html')
 
+
 @app.route('/parkinsons', methods=['GET', 'POST'])
+@login_required
 def parkinsons():
     if request.method == 'POST':
-        # Get user input
-        user_input = [float(request.form[field]) for field in request.form]
-        # Make prediction
-        parkinsons_prediction = parkinsons_model.predict([user_input])
-        if parkinsons_prediction[0] == 1:
-            result = "The person has Parkinson's disease"
-        else:
-            result = "The person does not have Parkinson's disease"
+        user_id = session.get('user_id')
+        
+        labels = {
+            'Average vocal fundamental frequency (MDVP:Fo(Hz))': float(request.form['MDVPFo']),
+            'Maximum vocal fundamental frequency (MDVP:Fhi(Hz))': float(request.form['MDVPFhi']),
+            'Minimum vocal fundamental frequency (MDVP:Flo(Hz))': float(request.form['MDVPFlo']),
+            'MDVP:Jitter(%)': float(request.form['MDVPJitter']),
+            'MDVP:Jitter(Abs)': float(request.form['MDVPJitterAbs']),
+            'MDVP:RAP': float(request.form['MDVPRAP']),
+            'MDVP:PPQ': float(request.form['MDVPPPQ']),
+            'Jitter:DDP': float(request.form['JitterDDP']),
+            'MDVP:Shimmer': float(request.form['MDVPShimmer']),
+            'MDVP:Shimmer(dB)': float(request.form['MDVPShimmerdB']),
+            'Shimmer:APQ3': float(request.form['ShimmerAPQ3']),
+            'Shimmer:APQ5': float(request.form['ShimmerAPQ5']),
+            'MDVP:APQ': float(request.form['MDVPAPQ']),
+            'Shimmer:DDA': float(request.form['ShimmerDDA']),
+            'Noise-to-harmonics ratio (NHR)': float(request.form['NHR']),
+            'Harmonics-to-noise ratio (HNR)': float(request.form['HNR']),
+            'Relative vocal fundamental frequency variability (RPDE)': float(request.form['RPDE']),
+            'DFA (signal fractal scaling exponent)': float(request.form['DFA']),
+            'Detrended fluctuation analysis of pitch period': float(request.form['spread1']),
+            'Detrended fluctuation analysis of amplitude period': float(request.form['spread2']),
+            'Correlation dimension': float(request.form['D2']),
+            'Pitch period entropy': float(request.form['PPE']),
+        }
+        parkinsons_prediction = parkinsons_model.predict([[labels[field] for field in labels]])
+        result = "The person has Parkinson's disease" if parkinsons_prediction[0] == 1 else "The person does not have Parkinson's disease"
+
+        generate_report(user_id, 'Parkinsons Disease', result, labels)
+        
         return render_template('parkinsons.html', result=result)
+    
     return render_template('parkinsons.html')
+
+@app.route('/symptoms', methods=['GET', 'POST'])
+@login_required
+def symptoms():
+    if request.method == 'POST':
+        selected_symptoms = []
+        for key, weight in utils.symptom_weights.items():
+            if request.form.get(key):
+                selected_symptoms.append((key, weight))
+        
+        top_17_symptoms = sorted(selected_symptoms, key=lambda x: x[1], reverse=True)[:17]
+
+        if len(top_17_symptoms) < 17:
+            top_17_symptoms += [('other', 0)] * (17 - len(top_17_symptoms))
+        
+        input_data = [[weight for _, weight in top_17_symptoms]]
+        predictions = svm_model.predict(input_data)
+        predicted_disease_names = label_encoder.inverse_transform(predictions)
+        precautions_list = []
+        descriptions_list = []
+        for disease_name in predicted_disease_names:
+            if not df_precautions[df_precautions['Disease'] == disease_name].empty:
+                precautions_row = df_precautions[df_precautions['Disease'] == disease_name].iloc[:, 1:].values.tolist()[0]
+            else:
+                precautions_row = ["Precautions not available because the disease cannot be identified."]
+            precautions_list.append(precautions_row)
+            
+            if not df_description[df_description['Disease'] == disease_name].empty:
+                description = df_description[df_description['Disease'] == disease_name]['Description'].values[0]
+            else:
+                description = "Disease description not available because the disease cannot be identified."
+            descriptions_list.append(description)
+
+        generate_report(session['user_id'], 'Symptom Analysis', ', '.join(predicted_disease_names), {k: v for k, v in selected_symptoms})
+
+        return render_template('symptoms.html', selected_symptoms=[symptom for symptom, _ in top_17_symptoms], predicted_diseases=predicted_disease_names, precautions=precautions_list, descriptions=descriptions_list)
+
+    return render_template('symptoms.html')
+
+
+@app.route('/reset', methods=['POST','GET'])
+def reset_symptoms():
+    predicted_diseases = []
+    precautions = []
+    descriptions = []
+    return render_template('symptoms.html', predicted_diseases=predicted_diseases, precautions=precautions, descriptions=descriptions)
+
+# Routes for user reports and report downloads
+@app.route('/reports')
+@login_required
+def user_reports():
+    user_id = session.get('user_id')
+    conn = sqlite3.connect('reports.db')
+    cursor = conn.cursor()
+    cursor.execute('SELECT id, time, report_type FROM reports WHERE user_id = ?', (user_id,))
+    reports = cursor.fetchall()
+    conn.close()
+    return render_template('reports.html', reports=reports)
+
+@app.route('/download_report/<int:report_id>')
+def download_report(report_id):
+    conn = sqlite3.connect('reports.db')
+    cursor = conn.cursor()
+    cursor.execute('SELECT * FROM reports WHERE id = ?', (report_id,))
+    report = cursor.fetchone()
+    conn.close()
+    if report:
+        report_id, user_id, report_type, report_data, time = report
+        pdf_bytes = BytesIO(report_data)
+        return send_file(pdf_bytes,as_attachment=True,download_name=f'report_{report_id}.pdf')
+    else:
+        return 'Report not found', 404
 
 
 if __name__ == '__main__':
