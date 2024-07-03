@@ -8,6 +8,8 @@ This web application helps users to predict potential diseases based on symptoms
 - **Disease prediction:** Users can input symptoms, and the application predicts potential diseases.
 - **Disease-specific diagnosis:** The application provides detailed information about predicted diseases, including descriptions and precautions.
 - **Disease-specific tests:** Users can take specific tests for diseases like diabetes, heart disease, and Parkinson's disease to get more accurate predictions.
+- **Report generation:** Generate reports summarizing disease predictions and precautions also Download these reports for personal records or further consultation.
+
 
 ## Technologies Used
 
@@ -62,3 +64,4 @@ This web application helps users to predict potential diseases based on symptoms
 3. Input symptoms and submit to get disease predictions.
 4. Explore the details of predicted diseases, including descriptions and precautions.
 5. Optionally, take specific tests for diseases for more accurate predictions.
+6. Generate reports summarizing disease predictions and precautions also Download these reports for personal records or further consultation.
