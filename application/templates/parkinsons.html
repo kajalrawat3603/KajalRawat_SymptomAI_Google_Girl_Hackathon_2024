@@ -1,101 +1,102 @@
 {% extends "layout.html" %}
 {% block content %}
-    <h1 style="text-align: center; margin-bottom: 20px;">Parkinson's Disease Prediction</h1>
+<h1 style="text-align: center; margin-bottom: 20px;">Parkinson's Disease Prediction</h1>
 <div class="container" style="grid-template-columns: [one]100%;">
     <form method="POST" id="parkinsonsForm">
         <div class="labels-container" style="width: 100%;">
-        <div class="form-group">
-            <label for="fo">Average vocal fundamental frequency (MDVP:Fo(Hz)):</label>
-            <input type="text" id="fo" name="MDVPFo" class="form-control">
+            <div class="form-group">
+                <label for="fo">Average vocal fundamental frequency (MDVP:Fo(Hz)):</label>
+                <input type="text" id="fo" name="MDVPFo" class="form-control">
+            </div>
+            <div class="form-group">
+                <label for="fhi">Maximum vocal fundamental frequency (MDVP:Fhi(Hz)):</label>
+                <input type="text" id="fhi" name="MDVPFhi" class="form-control">
+            </div>
+            <div class="form-group">
+                <label for="flo">Minimum vocal fundamental frequency (MDVP:Flo(Hz)):</label>
+                <input type="text" id="flo" name="MDVPFlo" class="form-control">
+            </div>
+            <div class="form-group">
+                <label for="Jitter_percent">MDVP jitter percentage (MDVP:Jitter(%)):</label>
+                <input type="text" id="Jitter_percent" name="MDVPJitter" class="form-control">
+            </div>
+            <div class="form-group">
+                <label for="Jitter_Abs">MDVP absolute jitter (ms) (MDVP:Jitter(Abs)):</label>
+                <input type="text" id="Jitter_Abs" name="MDVPJitterAbs" class="form-control">
+            </div>
+            <div class="form-group">
+                <label for="RAP">MDVP relative amplitude perturbation (MDVP:RAP):</label>
+                <input type="text" id="RAP" name="MDVPRAP" class="form-control">
+            </div>
+            <div class="form-group">
+                <label for="PPQ">MDVP five-point period perturbation quotient (MDVP:PPQ):</label>
+                <input type="text" id="PPQ" name="MDVPPPQ" class="form-control">
+            </div>
+            <div class="form-group">
+                <label for="DDP">Average absolute difference of differences between jitter cycles (Jitter:DDP):</label>
+                <input type="text" id="DDP" name="JitterDDP" class="form-control">
+            </div>
+            <div class="form-group">
+                <label for="Shimmer">MDVP local shimmer (MDVP:Shimmer):</label>
+                <input type="text" id="Shimmer" name="MDVPShimmer" class="form-control">
+            </div>
+            <div class="form-group">
+                <label for="Shimmer_dB">MDVP local shimmer in dB (MDVP:Shimmer(dB)):</label>
+                <input type="text" id="Shimmer_dB" name="MDVPShimmerdB" class="form-control">
+            </div>
+            <div class="form-group">
+                <label for="APQ3">Three-point amplitude perturbation quotient (Shimmer:APQ3):</label>
+                <input type="text" id="APQ3" name="ShimmerAPQ3" class="form-control">
+            </div>
+            <div class="form-group">
+                <label for="APQ5">Five-point amplitude perturbation quotient (Shimmer:APQ5):</label>
+                <input type="text" id="APQ5" name="ShimmerAPQ5" class="form-control">
+            </div>
+            <div class="form-group">
+                <label for="APQ">MDVP amplitude perturbation quotient (MDVP:APQ):</label>
+                <input type="text" id="APQ" name="MDVPAPQ" class="form-control">
+            </div>
+            <div class="form-group">
+                <label for="DDA">Average absolute differences between the amplitudes of consecutive periods
+                    (Shimmer:DDA):</label>
+                <input type="text" id="DDA" name="ShimmerDDA" class="form-control">
+            </div>
+            <div class="form-group">
+                <label for="NHR">Noise-to-harmonics ratio (NHR):</label>
+                <input type="text" id="NHR" name="NHR" class="form-control">
+            </div>
+            <div class="form-group">
+                <label for="HNR">Harmonics-to-noise ratio (HNR):</label>
+                <input type="text" id="HNR" name="HNR" class="form-control">
+            </div>
+            <div class="form-group">
+                <label for="RPDE">Recurrence period density entropy measure (RPDE):</label>
+                <input type="text" id="RPDE" name="RPDE" class="form-control">
+            </div>
+            <div class="form-group">
+                <label for="DFA">Detrended fluctuation analysis measure (DFA):</label>
+                <input type="text" id="DFA" name="DFA" class="form-control">
+            </div>
+            <div class="form-group">
+                <label for="spread1">Nonlinear measure of fundamental frequency variation (spread1):</label>
+                <input type="text" id="spread1" name="spread1" class="form-control">
+            </div>
+            <div class="form-group">
+                <label for="spread2">Nonlinear measure of fundamental frequency variation (spread2):</label>
+                <input type="text" id="spread2" name="spread2" class="form-control">
+            </div>
+            <div class="form-group">
+                <label for="D2">Correlation dimension (D2):</label>
+                <input type="text" id="D2" name="D2" class="form-control">
+            </div>
+            <div class="form-group">
+                <label for="PPE">Pitch period entropy (PPE):</label>
+                <input type="text" id="PPE" name="PPE" class="form-control">
+            </div>
         </div>
-        <div class="form-group">
-            <label for="fhi">Maximum vocal fundamental frequency (MDVP:Fhi(Hz)):</label>
-            <input type="text" id="fhi" name="MDVPFhi" class="form-control">
-        </div>
-        <div class="form-group">
-            <label for="flo">Minimum vocal fundamental frequency (MDVP:Flo(Hz)):</label>
-            <input type="text" id="flo" name="MDVPFlo" class="form-control">
-        </div>
-        <div class="form-group">
-            <label for="Jitter_percent">MDVP jitter percentage (MDVP:Jitter(%)):</label>
-            <input type="text" id="Jitter_percent" name="MDVPJitter" class="form-control">
-        </div>
-        <div class="form-group">
-            <label for="Jitter_Abs">MDVP absolute jitter (ms) (MDVP:Jitter(Abs)):</label>
-            <input type="text" id="Jitter_Abs" name="MDVPJitterAbs" class="form-control">
-        </div>
-        <div class="form-group">
-            <label for="RAP">MDVP relative amplitude perturbation (MDVP:RAP):</label>
-            <input type="text" id="RAP" name="MDVPRAP" class="form-control">
-        </div>
-        <div class="form-group">
-            <label for="PPQ">MDVP five-point period perturbation quotient (MDVP:PPQ):</label>
-            <input type="text" id="PPQ" name="MDVPPPQ" class="form-control">
-        </div>
-        <div class="form-group">
-            <label for="DDP">Average absolute difference of differences between jitter cycles (Jitter:DDP):</label>
-            <input type="text" id="DDP" name="JitterDDP" class="form-control">
-        </div>
-        <div class="form-group">
-            <label for="Shimmer">MDVP local shimmer (MDVP:Shimmer):</label>
-            <input type="text" id="Shimmer" name="MDVPShimmer" class="form-control">
-        </div>
-        <div class="form-group">
-            <label for="Shimmer_dB">MDVP local shimmer in dB (MDVP:Shimmer(dB)):</label>
-            <input type="text" id="Shimmer_dB" name="MDVPShimmerdB" class="form-control">
-        </div>
-        <div class="form-group">
-            <label for="APQ3">Three-point amplitude perturbation quotient (Shimmer:APQ3):</label>
-            <input type="text" id="APQ3" name="ShimmerAPQ3" class="form-control">
-        </div>
-        <div class="form-group">
-            <label for="APQ5">Five-point amplitude perturbation quotient (Shimmer:APQ5):</label>
-            <input type="text" id="APQ5" name="ShimmerAPQ5" class="form-control">
-        </div>
-        <div class="form-group">
-            <label for="APQ">MDVP amplitude perturbation quotient (MDVP:APQ):</label>
-            <input type="text" id="APQ" name="MDVPAPQ" class="form-control">
-        </div>
-        <div class="form-group">
-            <label for="DDA">Average absolute differences between the amplitudes of consecutive periods (Shimmer:DDA):</label>
-            <input type="text" id="DDA" name="ShimmerDDA" class="form-control">
-        </div>
-        <div class="form-group">
-            <label for="NHR">Noise-to-harmonics ratio (NHR):</label>
-            <input type="text" id="NHR" name="NHR" class="form-control">
-        </div>
-        <div class="form-group">
-            <label for="HNR">Harmonics-to-noise ratio (HNR):</label>
-            <input type="text" id="HNR" name="HNR" class="form-control">
-        </div>
-        <div class="form-group">
-            <label for="RPDE">Recurrence period density entropy measure (RPDE):</label>
-            <input type="text" id="RPDE" name="RPDE" class="form-control">
-        </div>
-        <div class="form-group">
-            <label for="DFA">Detrended fluctuation analysis measure (DFA):</label>
-            <input type="text" id="DFA" name="DFA" class="form-control">
-        </div>
-        <div class="form-group">
-            <label for="spread1">Nonlinear measure of fundamental frequency variation (spread1):</label>
-            <input type="text" id="spread1" name="spread1" class="form-control">
-        </div>
-        <div class="form-group">
-            <label for="spread2">Nonlinear measure of fundamental frequency variation (spread2):</label>
-            <input type="text" id="spread2" name="spread2" class="form-control">
-        </div>
-        <div class="form-group">
-            <label for="D2">Correlation dimension (D2):</label>
-            <input type="text" id="D2" name="D2" class="form-control">
-        </div>
-        <div class="form-group">
-            <label for="PPE">Pitch period entropy (PPE):</label>
-            <input type="text" id="PPE" name="PPE" class="form-control">
-        </div>
-    </div>
-    <button type="submit" class="btn btn-primary">Predict</button>
+        <button type="submit" class="btn btn-primary">Predict</button>
     </form>
-    
+
     {% if result %}
     <div class="result-container" style="margin-top: 20px; text-align: center;">
         <p class="result-text">{{ result }}</p>
@@ -103,10 +104,10 @@
     {% endif %}
 </div>
 <script>
-    document.getElementById("parkinsonsForm").addEventListener("submit", function(event) {
+    document.getElementById("parkinsonsForm").addEventListener("submit", function (event) {
         var formValid = true;
         var formFields = this.elements;
-        
+
         for (var i = 0; i < formFields.length; i++) {
             if (formFields[i].type === "text" && formFields[i].value.trim() === "") {
                 formValid = false;

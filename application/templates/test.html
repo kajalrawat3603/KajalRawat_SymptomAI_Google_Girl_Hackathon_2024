@@ -1,65 +1,161 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <link rel='stylesheet'
-            href="{{ url_for('static',filename='style.css') }}" />
-    </head>
-    <body>
-        {% extends "layout.html" %}
-        {% block content %}
-        <div class="test">
+
+<head>
+    <link rel='stylesheet' href="{{ url_for('static',filename='style.css') }}" />
+</head>
+
+<body>
+    {% extends "layout.html" %}
+    {% block content %}
+    <div class="test">
         <h1>Know Your Health</h1>
-        <h2>Explore Our Disease Testing Options</h2>
+        <h2>Explore Our Disease
+            Testing Options</h2>
     </div>
-        <div class="show">
-            <div class="pro">
-                    <div class="desc">
-                        <h2>Medical Forecasting</h2>
-                        <p>Medical forecasting uses data analysis and predictive modeling to anticipate healthcare trends, disease patterns, and resource demands. It supports proactive decision-making and efficient resource allocation, ultimately enhancing public health outcomes by predicting needs and preventing issues before they arise.</p>
-                        <button><a href="{{url_for('symptoms')}}" style="color: white; text-decoration: none;">Disease Prediction</a></button>
-                        
-                    </div>
-                    <img src="static/images/a3.png">
-                    
-                </div>
-                
-                    <div class="pro">
-                        <div
-                            class="desc">
-                            <h2>Diabetes</h2>
-                            <p>Diabetes is a chronic condition where the body either doesn't produce enough insulin or can't use it effectively, leading to high blood sugar levels. </p>
-                            <p>It requires lifelong management through medication, diet, and exercise to prevent complications such as heart disease, stroke, and nerve damage.
-                            </p>
-                            <button><a href="{{ url_for('diabetes') }}" style="color: white; text-decoration: none;">Diabetes</a></button>
-                        </div>
-                        <img
-                            src="static/images/diabetes.jpg"
-                            alt="Diabetes Image">
-                    </div>
-                <div class="pro">
-                    <div class="desc">
-                        <h2>Parkinson's Disease</h2>
-                        <p>Parkinson's disease is a progressive neurological disorder characterized by tremors, stiffness, and impaired movement. It occurs due to the loss of dopamine-producing cells in the brain. While there's no cure, medications and therapies can help manage symptoms and improve quality of life.</p>
-                        <button><a href="{{ url_for('parkinsons') }}" style="color: white; text-decoration: none;">Parkinsons</a></button>
-                    </div>
-                    <img src="static/images/parkinson.jpg"alt="Parkinsons Image"">
-                </div>
-            
-        
-                <div class="pro">
-                    <div class="desc">
-                        <h2>Heart Disease</h2>
-                        <p>Heart disease refers to various conditions that affect the heart's function and blood vessels, including coronary artery disease, heart attacks, and heart failure.Risk factors include high blood pressure, high cholesterol, smoking, and obesity.
-                        </p>
-                        <p>Symptoms include chest pain and shortness of breath.</p>
-                        <button><a href="{{ url_for('heart_disease') }}" style="color: white; text-decoration: none;">Heart
-                            Disease</a></button>
-                    </div>
-                    <img
-                        src="{{ url_for('static', filename='images/heart-disease.jpg') }}"
-                        alt="Heart Disease Image">
+    <div class="show">
+        <div class="pro">
+            <div class="desc">
+                <h2>Medical
+                    Forecasting</h2>
+                <p>Medical
+                    forecasting uses
+                    data analysis
+                    and predictive
+                    modeling to
+                    anticipate
+                    healthcare
+                    trends,
+                    disease
+                    patterns, and
+                    resource
+                    demands. It
+                    supports
+                    proactive
+                    decision-making
+                    and efficient
+                    resource
+                    allocation,
+                    ultimately
+                    enhancing public
+                    health outcomes
+                    by predicting
+                    needs and
+                    preventing
+                    issues
+                    before they
+                    arise.</p>
+                <button><a href="{{url_for('symptoms')}}" style="color: white; text-decoration: none;">Disease
+                        Prediction</a></button>
+
             </div>
+            <img src="static/images/a3.png">
+
         </div>
-        {% endblock %}
-    </body>
+
+        <div class="pro">
+            <div class="desc">
+                <h2>Diabetes</h2>
+                <p>Diabetes is a
+                    chronic
+                    condition where
+                    the body either
+                    doesn't produce
+                    enough insulin
+                    or can't use it
+                    effectively,
+                    leading to high
+                    blood sugar
+                    levels. </p>
+                <p>It requires
+                    lifelong
+                    management
+                    through
+                    medication,
+                    diet, and
+                    exercise to
+                    prevent
+                    complications
+                    such
+                    as heart
+                    disease, stroke,
+                    and nerve
+                    damage.
+                </p>
+                <button><a href="{{ url_for('diabetes') }}"
+                        style="color: white; text-decoration: none;">Diabetes</a></button>
+            </div>
+            <img src="static/images/diabetes.jpg" alt="Diabetes Image">
+        </div>
+        <div class="pro">
+            <div class="desc">
+                <h2>Parkinson's
+                    Disease</h2>
+                <p>Parkinson's
+                    disease is a
+                    progressive
+                    neurological
+                    disorder
+                    characterized by
+                    tremors,
+                    stiffness, and
+                    impaired
+                    movement. It
+                    occurs due to
+                    the loss of
+                    dopamine-producing
+                    cells in the
+                    brain. While
+                    there's
+                    no cure,
+                    medications and
+                    therapies can
+                    help manage
+                    symptoms and
+                    improve quality
+                    of life.</p>
+                <button><a href="{{ url_for('parkinsons') }}"
+                        style="color: white; text-decoration: none;">Parkinsons</a></button>
+            </div>
+            <img src="static/images/parkinson.jpg" alt="Parkinsons Image"">
+            </div>
+
+            <div class=" pro">
+            <div class="desc">
+                <h2>Heart
+                    Disease</h2>
+                <p>Heart disease
+                    refers to
+                    various
+                    conditions that
+                    affect the
+                    heart's function
+                    and blood
+                    vessels,
+                    including
+                    coronary artery
+                    disease, heart
+                    attacks, and
+                    heart
+                    failure.Risk
+                    factors include
+                    high blood
+                    pressure, high
+                    cholesterol,
+                    smoking, and
+                    obesity.
+                </p>
+                <p>Symptoms include
+                    chest pain and
+                    shortness of
+                    breath.</p>
+                <button><a href="{{ url_for('heart_disease') }}" style="color: white; text-decoration: none;">Heart
+                        Disease</a></button>
+            </div>
+            <img src="{{ url_for('static', filename='images/heart-disease.jpg') }}" alt="Heart Disease Image">
+        </div>
+    </div>
+    {% endblock %}
+</body>
+
 </html>

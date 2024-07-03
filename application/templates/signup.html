@@ -1,44 +1,38 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sign Up</title>
-      <link rel='stylesheet' href="{{ url_for('static',filename='style.css') }}">
-      <link rel="stylesheet"
-      href="https://use.fontawesome.com/releases/v5.15.4/css/all.css"
-      />
-    <link rel="preconnect"
-      href="https://fonts.googleapis.com">
-      <link
-      href="https://fonts.googleapis.com/css2?family=Comforter+Brush&display=swap"
-      rel="stylesheet">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign Up</title>
+  <link rel='stylesheet' href="{{ url_for('static',filename='style.css') }}">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Comforter+Brush&display=swap" rel="stylesheet">
 </head>
+
 <body>
   {% extends "layout.html" %}
   {% block content %}
   <div class="login-form-container">
     <form action="/signup" method="POST">
-      <a href="/" style="text-decoration: none; color: white; float:right; margin-bottom:10px ; font-size: 20px; font-weight: bold;" >&times;</a>
+      <a href="/"
+        style="text-decoration: none; color: white; float:right; margin-bottom:10px ; font-size: 20px; font-weight: bold;">&times;</a>
       <span>Username</span>
-      <input type="text" id="username" name="username" 
-        class="box"
-        placeholder="Enter Your Name" id="" required>
+      <input type="text" id="username" name="username" class="box" placeholder="Enter Your Name" id="" required>
       <span>Email Address</span>
-      <input  type="email" id="email"
-        name="email" class="box"
-        placeholder="Enter Your Email" id="" required>
+      <input type="email" id="email" name="email" class="box" placeholder="Enter Your Email" id="" required>
       <span>Password</span>
-      <input type="password" id="password" name="password"  class="box"
-        placeholder="Enter Your Password"  required autocomplete="off">
-        <span>Confirm Password</span>
-        <input type="password" id="confirm_password" name="confirm_password"  class="box"
-          placeholder="Re-Enter Your Password"  required autocomplete="off">
-      <input type="submit"
-        value="Sign Up" class="btn">
-      
+      <input type="password" id="password" name="password" class="box" placeholder="Enter Your Password" required
+        autocomplete="off">
+      <span>Confirm Password</span>
+      <input type="password" id="confirm_password" name="confirm_password" class="box"
+        placeholder="Re-Enter Your Password" required autocomplete="off">
+      <input type="submit" value="Sign Up" class="btn">
+
     </form>
-</div>
-    {% endblock %}
+  </div>
+  {% endblock %}
 </body>
+
 </html>

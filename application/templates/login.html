@@ -10,20 +10,20 @@
     <link href="https://fonts.googleapis.com/css2?family=Comforter+Brush&display=swap" rel="stylesheet">
 </head>
 <body>
-  {% extends "layout.html" %}
-  {% block content %}
-  <div class="login-form-container">
+    {% extends "layout.html" %}
+    {% block content %}
+    <div class="login-form-container">
         <form action="/login" method="post">
-          <a href="/" style="text-decoration: none; color: white; float:right; margin-bottom:10px; font-size: 20px; font-weight: bold;">&times;</a>
-          <span>Username</span>
-          <input type="text" id="username" name="username" class="box" placeholder="Enter Your Name" required>
-          <span>Email Address</span>
-          <input type="email" id="email" name="email" class="box" placeholder="Enter Your Email" required>
-          <span>Password</span>
-          <input type="password" id="password" name="password" class="box" placeholder="Enter Your Password" required autocomplete="off">
-          <input type="submit" value="Log In" class="btn">
-          <p>Forget Password? <a href="">click here</a></p>
-          <p>Don't have an Account? <a href="/signup">create an account</a></p>
+            <a href="/" style="text-decoration: none; color: white; float:right; margin-bottom:10px; font-size: 20px; font-weight: bold;">&times;</a>
+            <span>Username</span>
+            <input type="text" id="username" name="username" class="box" placeholder="Enter Your Name" required>
+            <span>Email Address</span>
+            <input type="email" id="email" name="email" class="box" placeholder="Enter Your Email" required>
+            <span>Password</span>
+            <input type="password" id="password" name="password" class="box" placeholder="Enter Your Password" required autocomplete="off">
+            <input type="submit" value="Log In" class="btn">
+            <p>Forget Password? <a href="/reset_password">click here</a></p>
+            <p>Don't have an Account? <a href="/signup">create an account</a></p>
         </form>
     </div>
     {% endblock %}

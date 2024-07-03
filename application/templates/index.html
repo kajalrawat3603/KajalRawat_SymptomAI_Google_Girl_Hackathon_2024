@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <link rel='stylesheet' href="{{ url_for('static', filename='style.css') }}" />
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SymptomAI</title>
 </head>
+
 <body>
     {% extends "layout.html" %}
     {% block content %}
@@ -16,32 +18,42 @@
             <h1 class="headertext" style="margin-left: 200px; margin-top: -100px;">AI</h1>
         </div>
     </header>
-    <div id="about" >
+    <div id="about">
         <div class="show">
             <div class="desc" style="margin-bottom: 30px;">
-                <h2 class="roboto-mono" >About SymptomAI</h2>
-                <h2 style="font-weight: 100; color: #333; font-size: 20px; margin-bottom: 10px;">Welcome to SymptomAI, where we use advanced AI to help you manage your health. Our goal is to provide accurate disease predictions based on your symptoms, helping you make informed health decisions.</h2>
+                <h2 class="roboto-mono">About SymptomAI</h2>
+                <h2 style="font-weight: 100; color: #333; font-size: 20px; margin-bottom: 10px;">Welcome to SymptomAI,
+                    where we use advanced AI to help you manage your health. Our goal is to provide accurate disease
+                    predictions based on your symptoms, helping you make informed health decisions.</h2>
                 <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px;">
                     <div class="ab">
                         <h2>Our Mission</h2>
-                        <p class="dec">We aim to revolutionize healthcare by offering accessible, reliable health insights through cutting-edge technology. Early detection and prevention are key, and SymptomAI bridges the gap between you and healthcare professionals.</p>
+                        <p class="dec">We aim to revolutionize healthcare by offering accessible, reliable health
+                            insights through cutting-edge technology. Early detection and prevention are key, and
+                            SymptomAI bridges the gap between you and healthcare professionals.</p>
                     </div>
                     <div class="ab">
                         <h2>Our Technology</h2>
-                        <p class="dec">SymptomAI uses sophisticated algorithms and machine learning to analyze your symptoms and predict potential health conditions. Our technology is built on extensive medical data, ensuring accurate and reliable predictions.</p>
+                        <p class="dec">SymptomAI uses sophisticated algorithms and machine learning to analyze your
+                            symptoms and predict potential health conditions. Our technology is built on extensive
+                            medical data, ensuring accurate and reliable predictions.</p>
                     </div>
                     <div class="ab">
                         <h2>Our Features</h2>
                         <ul class="dec" style="list-style-type: disc; display: flex; flex-direction: column;">
-                            <li>Disease Prediction:Input your symptoms and receive a detailed report with potential diagnoses and recommended precautions.</li>
+                            <li>Disease Prediction:Input your symptoms and receive a detailed report with potential
+                                diagnoses and recommended precautions.</li>
                             <li>Secure and Confidential:Your data is securely encrypted and stored.</li>
-                            <li>User Reports:Generate and download personalized health reports to share with your healthcare provider.</li>
+                            <li>User Reports:Generate and download personalized health reports to share with your
+                                healthcare provider.</li>
                             <li>Easy Navigation:Our platform is intuitive and user-friendly.</li>
                         </ul>
                     </div>
                     <div class="ab">
                         <h2>Our Commitment</h2>
-                        <p class="dec">We continuously update our algorithms and expand our database with the latest medical research. Our team is dedicated to providing top-notch service and support, making a positive impact on your health.</p>
+                        <p class="dec">We continuously update our algorithms and expand our database with the latest
+                            medical research. Our team is dedicated to providing top-notch service and support, making a
+                            positive impact on your health.</p>
                     </div>
                 </div>
             </div>
@@ -50,4 +62,5 @@
     <div class="d-flex justify-content-center mt-4"></div>
     {% endblock %}
 </body>
+
 </html>

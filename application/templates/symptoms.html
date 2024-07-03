@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,109 +12,173 @@
         }
     </style>
 </head>
+
 <body>
     {% extends "layout.html" %}
     {% block content %}
     <h1>Disease Predictor</h1>
     <div class="container">
         <div>
-        <h2>Select your symptoms:</h2>
-        <form action="/symptoms" method="POST" id="symptoms-form" >
-            <div class="labels-container">
-            <label for=itching><input type="checkbox" id="itching" name="itching" value="itching">itching</label><br>
-<label for=skin_rash><input type="checkbox" id="skin_rash" name="skin_rash" value="skin_rash">skin rash</label><br>
-<label for=nodal_skin_eruptions><input type="checkbox" id="nodal_skin_eruptions" name="nodal_skin_eruptions" value="nodal_skin_eruptions">nodal skin eruptions</label><br>
-<label for=continuous_sneezing><input type="checkbox" id="continuous_sneezing" name="continuous_sneezing" value="continuous_sneezing">continuous sneezing</label><br>
-<label for=shivering><input type="checkbox" id="shivering" name="shivering" value="shivering">shivering</label><br>
-<label for=chills><input type="checkbox" id="chills" name="chills" value="chills">chills</label><br>
-<label for=joint_pain><input type="checkbox" id="joint_pain" name="joint_pain" value="joint_pain">joint pain</label><br>
-<label for=stomach_pain><input type="checkbox" id="stomach_pain" name="stomach_pain" value="stomach_pain">stomach pain</label><br>
-<label for=acidity><input type="checkbox" id="acidity" name="acidity" value="acidity">acidity</label><br>
-<label for=ulcers_on_tongue><input type="checkbox" id="ulcers_on_tongue" name="ulcers_on_tongue" value="ulcers_on_tongue">ulcers on tongue</label><br>
-<label for=muscle_wasting><input type="checkbox" id="muscle_wasting" name="muscle_wasting" value="muscle_wasting">muscle wasting</label><br>
-<label for=vomiting><input type="checkbox" id="vomiting" name="vomiting" value="vomiting">vomiting</label><br>
-<label for=burning_micturition><input type="checkbox" id="burning_micturition" name="burning_micturition" value="burning_micturition">burning micturition</label><br>
-<label for=spotting_urination><input type="checkbox" id="spotting_urination" name="spotting_urination" value="spotting_urination">spotting urination</label><br>
-<label for=fatigue><input type="checkbox" id="fatigue" name="fatigue" value="fatigue">fatigue</label><br>
-<label for=weight_gain><input type="checkbox" id="weight_gain" name="weight_gain" value="weight_gain">weight gain</label><br>
-<label for=anxiety><input type="checkbox" id="anxiety" name="anxiety" value="anxiety">anxiety</label><br>
-<label for=cold_hands_and_feets><input type="checkbox" id="cold_hands_and_feets" name="cold_hands_and_feets" value="cold_hands_and_feets">cold hands and feets</label><br>
-<label for=mood_swings><input type="checkbox" id="mood_swings" name="mood_swings" value="mood_swings">mood swings</label><br>
-<label for=weight_loss><input type="checkbox" id="weight_loss" name="weight_loss" value="weight_loss">weight loss</label><br>
-<label for=restlessness><input type="checkbox" id="restlessness" name="restlessness" value="restlessness">restlessness</label><br>
-<label for=lethargy><input type="checkbox" id="lethargy" name="lethargy" value="lethargy">lethargy</label><br>
-<label for=patches_in_throat><input type="checkbox" id="patches_in_throat" name="patches_in_throat" value="patches_in_throat">patches in throat</label><br>
-<label for=irregular_sugar_level><input type="checkbox" id="irregular_sugar_level" name="irregular_sugar_level" value="irregular_sugar_level">irregular sugar level</label><br>
-<label for=cough><input type="checkbox" id="cough" name="cough" value="cough">cough</label><br>
-<label for=high_fever><input type="checkbox" id="high_fever" name="high_fever" value="high_fever">high fever</label><br>
-<label for=sunken_eyes><input type="checkbox" id="sunken_eyes" name="sunken_eyes" value="sunken_eyes">sunken eyes</label><br>
-<label for=breathlessness><input type="checkbox" id="breathlessness" name="breathlessness" value="breathlessness">breathlessness</label><br>
-<label for=sweating><input type="checkbox" id="sweating" name="sweating" value="sweating">sweating</label><br>
-<label for=dehydration><input type="checkbox" id="dehydration" name="dehydration" value="dehydration">dehydration</label><br>
-<label for=indigestion><input type="checkbox" id="indigestion" name="indigestion" value="indigestion">indigestion</label><br>
-<label for=headache><input type="checkbox" id="headache" name="headache" value="headache">headache</label><br>
-<label for=yellowish_skin><input type="checkbox" id="yellowish_skin" name="yellowish_skin" value="yellowish_skin">yellowish skin</label><br>
-<label for=dark_urine><input type="checkbox" id="dark_urine" name="dark_urine" value="dark_urine">dark urine</label><br>
-<label for=nausea><input type="checkbox" id="nausea" name="nausea" value="nausea">nausea</label><br>
-<label for=loss_of_appetite><input type="checkbox" id="loss_of_appetite" name="loss_of_appetite" value="loss_of_appetite">loss of appetite</label><br>
-<label for=pain_behind_the_eyes><input type="checkbox" id="pain_behind_the_eyes" name="pain_behind_the_eyes" value="pain_behind_the_eyes">pain behind the eyes</label><br>
-<label for=back_pain><input type="checkbox" id="back_pain" name="back_pain" value="back_pain">back pain</label><br>
-<label for=constipation><input type="checkbox" id="constipation" name="constipation" value="constipation">constipation</label><br>
-<label for=abdominal_pain><input type="checkbox" id="abdominal_pain" name="abdominal_pain" value="abdominal_pain">abdominal pain</label><br>
-<label for=diarrhoea><input type="checkbox" id="diarrhoea" name="diarrhoea" value="diarrhoea">diarrhoea</label><br>
-<label for=mild_fever><input type="checkbox" id="mild_fever" name="mild_fever" value="mild_fever">mild fever</label><br>
-<label for=yellow_urine><input type="checkbox" id="yellow_urine" name="yellow_urine" value="yellow_urine">yellow urine</label><br>
-<label for=yellowing_of_eyes><input type="checkbox" id="yellowing_of_eyes" name="yellowing_of_eyes" value="yellowing_of_eyes">yellowing of eyes</label><br>
-<label for=acute_liver_failure><input type="checkbox" id="acute_liver_failure" name="acute_liver_failure" value="acute_liver_failure">acute liver failure</label><br>
-<label for=fluid_overload><input type="checkbox" id="fluid_overload" name="fluid_overload" value="fluid_overload">fluid overload</label><br>
-<label for=swelling_of_stomach><input type="checkbox" id="swelling_of_stomach" name="swelling_of_stomach" value="swelling_of_stomach">swelling of stomach</label><br>
-<label for=swelled_lymph_nodes><input type="checkbox" id="swelled_lymph_nodes" name="swelled_lymph_nodes" value="swelled_lymph_nodes">swelled lymph nodes</label><br>
-<label for=malaise><input type="checkbox" id="malaise" name="malaise" value="malaise">malaise</label><br>
-<label for=blurred_and_distorted_vision><input type="checkbox" id="blurred_and_distorted_vision" name="blurred_and_distorted_vision" value="blurred_and_distorted_vision">blurred and distorted vision</label><br>
-<label for=phlegm><input type="checkbox" id="phlegm" name="phlegm" value="phlegm">phlegm</label><br>
-<label for=throat_irritation><input type="checkbox" id="throat_irritation" name="throat_irritation" value="throat_irritation">throat irritation</label><br>
-<label for=redness_of_eyes><input type="checkbox" id="redness_of_eyes" name="redness_of_eyes" value="redness_of_eyes">redness of eyes</label><br>
-<label for=sinus_pressure><input type="checkbox" id="sinus_pressure" name="sinus_pressure" value="sinus_pressure">sinus pressure</label><br>
-<label for=runny_nose><input type="checkbox" id="runny_nose" name="runny_nose" value="runny_nose">runny nose</label><br>
-<label for=congestion><input type="checkbox" id="congestion" name="congestion" value="congestion">congestion</label><br>
-<label for=chest_pain><input type="checkbox" id="chest_pain" name="chest_pain" value="chest_pain">chest pain</label><br>
-<label for=weakness_in_limbs><input type="checkbox" id="weakness_in_limbs" name="weakness_in_limbs" value="weakness_in_limbs">weakness in limbs</label><br>
-<label for=fast_heart_rate><input type="checkbox" id="fast_heart_rate" name="fast_heart_rate" value="fast_heart_rate">fast heart rate</label><br>
-<label for=pain_during_bowel_movements><input type="checkbox" id="pain_during_bowel_movements" name="pain_during_bowel_movements" value="pain_during_bowel_movements">pain during bowel movements</label><br>
-<label for=pain_in_anal_region><input type="checkbox" id="pain_in_anal_region" name="pain_in_anal_region" value="pain_in_anal_region">pain in anal region</label><br>
-<label for=bloody_stool><input type="checkbox" id="bloody_stool" name="bloody_stool" value="bloody_stool">bloody stool</label><br>
-<label for=irritation_in_anus><input type="checkbox" id="irritation_in_anus" name="irritation_in_anus" value="irritation_in_anus">irritation in anus</label><br>
-<label for=neck_pain><input type="checkbox" id="neck_pain" name="neck_pain" value="neck_pain">neck pain</label><br>
-<label for=dizziness><input type="checkbox" id="dizziness" name="dizziness" value="dizziness">dizziness</label><br>
-            <br>
-            </div>
-        <div style="display: flex; justify-content: space-around; align-items: flex-start;">
-            <input class="button" type="submit" value="PREDICT" onclick="return validateForm()">
-        <input class="button" type="submit" value="RESET" formaction="/reset">
+            <h2>Select your symptoms:</h2>
+            <form action="/symptoms" method="POST" id="symptoms-form">
+                <div class="labels-container">
+                    <label for=itching><input type="checkbox" id="itching" name="itching"
+                            value="itching">itching</label><br>
+                    <label for=skin_rash><input type="checkbox" id="skin_rash" name="skin_rash" value="skin_rash">skin
+                        rash</label><br>
+                    <label for=nodal_skin_eruptions><input type="checkbox" id="nodal_skin_eruptions"
+                            name="nodal_skin_eruptions" value="nodal_skin_eruptions">nodal skin eruptions</label><br>
+                    <label for=continuous_sneezing><input type="checkbox" id="continuous_sneezing"
+                            name="continuous_sneezing" value="continuous_sneezing">continuous sneezing</label><br>
+                    <label for=shivering><input type="checkbox" id="shivering" name="shivering"
+                            value="shivering">shivering</label><br>
+                    <label for=chills><input type="checkbox" id="chills" name="chills" value="chills">chills</label><br>
+                    <label for=joint_pain><input type="checkbox" id="joint_pain" name="joint_pain"
+                            value="joint_pain">joint pain</label><br>
+                    <label for=stomach_pain><input type="checkbox" id="stomach_pain" name="stomach_pain"
+                            value="stomach_pain">stomach pain</label><br>
+                    <label for=acidity><input type="checkbox" id="acidity" name="acidity"
+                            value="acidity">acidity</label><br>
+                    <label for=ulcers_on_tongue><input type="checkbox" id="ulcers_on_tongue" name="ulcers_on_tongue"
+                            value="ulcers_on_tongue">ulcers on tongue</label><br>
+                    <label for=muscle_wasting><input type="checkbox" id="muscle_wasting" name="muscle_wasting"
+                            value="muscle_wasting">muscle wasting</label><br>
+                    <label for=vomiting><input type="checkbox" id="vomiting" name="vomiting"
+                            value="vomiting">vomiting</label><br>
+                    <label for=burning_micturition><input type="checkbox" id="burning_micturition"
+                            name="burning_micturition" value="burning_micturition">burning micturition</label><br>
+                    <label for=spotting_urination><input type="checkbox" id="spotting_urination"
+                            name="spotting_urination" value="spotting_urination">spotting urination</label><br>
+                    <label for=fatigue><input type="checkbox" id="fatigue" name="fatigue"
+                            value="fatigue">fatigue</label><br>
+                    <label for=weight_gain><input type="checkbox" id="weight_gain" name="weight_gain"
+                            value="weight_gain">weight gain</label><br>
+                    <label for=anxiety><input type="checkbox" id="anxiety" name="anxiety"
+                            value="anxiety">anxiety</label><br>
+                    <label for=cold_hands_and_feets><input type="checkbox" id="cold_hands_and_feets"
+                            name="cold_hands_and_feets" value="cold_hands_and_feets">cold hands and feets</label><br>
+                    <label for=mood_swings><input type="checkbox" id="mood_swings" name="mood_swings"
+                            value="mood_swings">mood swings</label><br>
+                    <label for=weight_loss><input type="checkbox" id="weight_loss" name="weight_loss"
+                            value="weight_loss">weight loss</label><br>
+                    <label for=restlessness><input type="checkbox" id="restlessness" name="restlessness"
+                            value="restlessness">restlessness</label><br>
+                    <label for=lethargy><input type="checkbox" id="lethargy" name="lethargy"
+                            value="lethargy">lethargy</label><br>
+                    <label for=patches_in_throat><input type="checkbox" id="patches_in_throat" name="patches_in_throat"
+                            value="patches_in_throat">patches in throat</label><br>
+                    <label for=irregular_sugar_level><input type="checkbox" id="irregular_sugar_level"
+                            name="irregular_sugar_level" value="irregular_sugar_level">irregular sugar level</label><br>
+                    <label for=cough><input type="checkbox" id="cough" name="cough" value="cough">cough</label><br>
+                    <label for=high_fever><input type="checkbox" id="high_fever" name="high_fever"
+                            value="high_fever">high fever</label><br>
+                    <label for=sunken_eyes><input type="checkbox" id="sunken_eyes" name="sunken_eyes"
+                            value="sunken_eyes">sunken eyes</label><br>
+                    <label for=breathlessness><input type="checkbox" id="breathlessness" name="breathlessness"
+                            value="breathlessness">breathlessness</label><br>
+                    <label for=sweating><input type="checkbox" id="sweating" name="sweating"
+                            value="sweating">sweating</label><br>
+                    <label for=dehydration><input type="checkbox" id="dehydration" name="dehydration"
+                            value="dehydration">dehydration</label><br>
+                    <label for=indigestion><input type="checkbox" id="indigestion" name="indigestion"
+                            value="indigestion">indigestion</label><br>
+                    <label for=headache><input type="checkbox" id="headache" name="headache"
+                            value="headache">headache</label><br>
+                    <label for=yellowish_skin><input type="checkbox" id="yellowish_skin" name="yellowish_skin"
+                            value="yellowish_skin">yellowish skin</label><br>
+                    <label for=dark_urine><input type="checkbox" id="dark_urine" name="dark_urine"
+                            value="dark_urine">dark urine</label><br>
+                    <label for=nausea><input type="checkbox" id="nausea" name="nausea" value="nausea">nausea</label><br>
+                    <label for=loss_of_appetite><input type="checkbox" id="loss_of_appetite" name="loss_of_appetite"
+                            value="loss_of_appetite">loss of appetite</label><br>
+                    <label for=pain_behind_the_eyes><input type="checkbox" id="pain_behind_the_eyes"
+                            name="pain_behind_the_eyes" value="pain_behind_the_eyes">pain behind the eyes</label><br>
+                    <label for=back_pain><input type="checkbox" id="back_pain" name="back_pain" value="back_pain">back
+                        pain</label><br>
+                    <label for=constipation><input type="checkbox" id="constipation" name="constipation"
+                            value="constipation">constipation</label><br>
+                    <label for=abdominal_pain><input type="checkbox" id="abdominal_pain" name="abdominal_pain"
+                            value="abdominal_pain">abdominal pain</label><br>
+                    <label for=diarrhoea><input type="checkbox" id="diarrhoea" name="diarrhoea"
+                            value="diarrhoea">diarrhoea</label><br>
+                    <label for=mild_fever><input type="checkbox" id="mild_fever" name="mild_fever"
+                            value="mild_fever">mild fever</label><br>
+                    <label for=yellow_urine><input type="checkbox" id="yellow_urine" name="yellow_urine"
+                            value="yellow_urine">yellow urine</label><br>
+                    <label for=yellowing_of_eyes><input type="checkbox" id="yellowing_of_eyes" name="yellowing_of_eyes"
+                            value="yellowing_of_eyes">yellowing of eyes</label><br>
+                    <label for=acute_liver_failure><input type="checkbox" id="acute_liver_failure"
+                            name="acute_liver_failure" value="acute_liver_failure">acute liver failure</label><br>
+                    <label for=fluid_overload><input type="checkbox" id="fluid_overload" name="fluid_overload"
+                            value="fluid_overload">fluid overload</label><br>
+                    <label for=swelling_of_stomach><input type="checkbox" id="swelling_of_stomach"
+                            name="swelling_of_stomach" value="swelling_of_stomach">swelling of stomach</label><br>
+                    <label for=swelled_lymph_nodes><input type="checkbox" id="swelled_lymph_nodes"
+                            name="swelled_lymph_nodes" value="swelled_lymph_nodes">swelled lymph nodes</label><br>
+                    <label for=malaise><input type="checkbox" id="malaise" name="malaise"
+                            value="malaise">malaise</label><br>
+                    <label for=blurred_and_distorted_vision><input type="checkbox" id="blurred_and_distorted_vision"
+                            name="blurred_and_distorted_vision" value="blurred_and_distorted_vision">blurred and
+                        distorted vision</label><br>
+                    <label for=phlegm><input type="checkbox" id="phlegm" name="phlegm" value="phlegm">phlegm</label><br>
+                    <label for=throat_irritation><input type="checkbox" id="throat_irritation" name="throat_irritation"
+                            value="throat_irritation">throat irritation</label><br>
+                    <label for=redness_of_eyes><input type="checkbox" id="redness_of_eyes" name="redness_of_eyes"
+                            value="redness_of_eyes">redness of eyes</label><br>
+                    <label for=sinus_pressure><input type="checkbox" id="sinus_pressure" name="sinus_pressure"
+                            value="sinus_pressure">sinus pressure</label><br>
+                    <label for=runny_nose><input type="checkbox" id="runny_nose" name="runny_nose"
+                            value="runny_nose">runny nose</label><br>
+                    <label for=congestion><input type="checkbox" id="congestion" name="congestion"
+                            value="congestion">congestion</label><br>
+                    <label for=chest_pain><input type="checkbox" id="chest_pain" name="chest_pain"
+                            value="chest_pain">chest pain</label><br>
+                    <label for=weakness_in_limbs><input type="checkbox" id="weakness_in_limbs" name="weakness_in_limbs"
+                            value="weakness_in_limbs">weakness in limbs</label><br>
+                    <label for=fast_heart_rate><input type="checkbox" id="fast_heart_rate" name="fast_heart_rate"
+                            value="fast_heart_rate">fast heart rate</label><br>
+                    <label for=pain_during_bowel_movements><input type="checkbox" id="pain_during_bowel_movements"
+                            name="pain_during_bowel_movements" value="pain_during_bowel_movements">pain during bowel
+                        movements</label><br>
+                    <label for=pain_in_anal_region><input type="checkbox" id="pain_in_anal_region"
+                            name="pain_in_anal_region" value="pain_in_anal_region">pain in anal region</label><br>
+                    <label for=bloody_stool><input type="checkbox" id="bloody_stool" name="bloody_stool"
+                            value="bloody_stool">bloody stool</label><br>
+                    <label for=irritation_in_anus><input type="checkbox" id="irritation_in_anus"
+                            name="irritation_in_anus" value="irritation_in_anus">irritation in anus</label><br>
+                    <label for=neck_pain><input type="checkbox" id="neck_pain" name="neck_pain" value="neck_pain">neck
+                        pain</label><br>
+                    <label for=dizziness><input type="checkbox" id="dizziness" name="dizziness"
+                            value="dizziness">dizziness</label><br>
+                    <br>
+                </div>
+                <div style="display: flex; justify-content: space-around; align-items: flex-start;">
+                    <input class="button" type="submit" value="PREDICT" onclick="return validateForm()">
+                    <input class="button" type="submit" value="RESET" formaction="/reset">
+                </div>
+            </form>
         </div>
-        </form>
-    </div>
         <div id="result_container">
             <h2>Prediction Result</h2>
             {%if predicted_diseases%}
             <div class="result-container">
-            <h3 class="result-text">Selected Symptoms:</h3>
-            <ul style="display: flex; flex-direction: column;">
-                {% for symptom in selected_symptoms %}
+                <h3 class="result-text">Selected Symptoms:</h3>
+                <ul style="display: flex; flex-direction: column;">
+                    {% for symptom in selected_symptoms %}
                     {% if symptom != 'other' %}
-                        <li>{{ symptom.replace('_', ' ') }}</li>
+                    <li>{{ symptom.replace('_', ' ') }}</li>
                     {% endif %}
-                {% endfor %}
-            </ul>
-            <br>
-            {% for index in range(0, predicted_diseases|length) %}
+                    {% endfor %}
+                </ul>
+                <br>
+                {% for index in range(0, predicted_diseases|length) %}
                 <h3 class="result-text">Predicted Disease: {{ predicted_diseases[index] }}</h3>
                 <h3 style="font-style: italic; font-weight:100;">Description: {{ descriptions[index] }}</h3>
                 <br>
                 <h4 class="result-text">Precautions:</h4>
                 <ul style="display: flex; flex-direction: column;">
                     {% for precaution in precautions[index] %}
-                        <li>{{ precaution }}</li>
+                    <li>{{ precaution }}</li>
                     {% endfor %}
                 </ul>
             </div>
@@ -167,7 +232,7 @@
         function resetForm() {
             var form = document.getElementById("symptoms-form");
             var checkboxes = form.querySelectorAll('input[type="checkbox"]');
-            checkboxes.forEach(function(checkbox) {
+            checkboxes.forEach(function (checkbox) {
                 checkbox.checked = false;
             });
 
@@ -176,4 +241,5 @@
     </script>
     {% endblock %}
 </body>
+
 </html>
