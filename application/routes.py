@@ -1,6 +1,6 @@
 import io
 import re
-from flask import render_template, flash, request, redirect, url_for, send_file, session
+from flask import render_template, flash, request, redirect, url_for, send_file, session,jsonify
 from werkzeug.utils import secure_filename
 import os
 import secrets
@@ -69,11 +69,11 @@ def create_reports_db():
 create_users_db()
 create_reports_db()
 
-# Function to insert a user into the users database
 def insert_user(username, email, password):
+    hashed_password = generate_password_hash(password)
     conn = sqlite3.connect('users.db')
     cursor = conn.cursor()
-    cursor.execute('INSERT INTO users (username, email, password) VALUES (?, ?, ?)', (username, email, password))
+    cursor.execute('INSERT INTO users (username, email, password) VALUES (?, ?, ?)', (username, email, hashed_password))
     conn.commit()
     conn.close()
 
@@ -86,7 +86,7 @@ def insert_report(user_id, report_type, report_data):
     conn.commit()
     conn.close()
 
-def generate_report(user_id, report_type, result, user_data):
+def generate_report(user_id, report_type, result, pos, neg, user_data):
     logo_path = "application/static/images/logo.png"
     pdf_buffer = BytesIO()
     c = canvas.Canvas(pdf_buffer, pagesize=letter)
@@ -122,8 +122,21 @@ def generate_report(user_id, report_type, result, user_data):
     y_position -= 20
     c.drawString(100, y_position, "Result:")
     y_position -= 15
+    c.setFont("Helvetica", 12)
     c.drawString(100, y_position, result)
-    
+    if report_type!='Symptom Analysis':
+        c.setFont("Helvetica-Bold", 14)
+        y_position -= 20
+        c.drawString(100, y_position, "Positive Result:")
+        y_position -= 15
+        c.setFont("Helvetica", 12)
+        c.drawString(100, y_position,f"{pos}%")
+        c.setFont("Helvetica-Bold", 14)
+        y_position -= 20
+        c.drawString(100, y_position, "Negitive Result:")
+        y_position -= 15
+        c.setFont("Helvetica", 12)
+        c.drawString(100, y_position,f"{neg}%")
     c.showPage()
     c.save()
     
@@ -143,9 +156,9 @@ def login_required(f):
     return decorated_function
 
 # Load machine learning models and data
-diabetes_model = pickle.load(open("application/Models/diabetes_model.h5", "rb"))
-heart_disease_model = pickle.load(open("application/Models/heart_disease_model.h5", "rb"))
-parkinsons_model = pickle.load(open("application/Models/parkinsons_model.h5", "rb"))
+diabetes_model = load("application/Models/diabetes_model.joblib")
+heart_disease_model = load(open("application/Models/heart_disease_model.joblib", "rb"))
+parkinsons_model = pickle.load(open("application/Models/parkinsons_model.joblib", "rb"))
 svm_model = load('application/Models/disease_symptom.joblib')
 df_precautions = pd.read_csv('application/Datasets/symptom/symptom_precaution.csv')
 df_description = pd.read_csv('application/Datasets/symptom/symptom_Description.csv')
@@ -154,13 +167,6 @@ label_encoder = LabelEncoder()
 label_encoder.fit(df_precautions['Disease'])
 
 
-def insert_user(username, email, password):
-    hashed_password = generate_password_hash(password)
-    conn = sqlite3.connect('users.db')
-    cursor = conn.cursor()
-    cursor.execute('INSERT INTO users (username, email, password) VALUES (?, ?, ?)', (username, email, hashed_password))
-    conn.commit()
-    conn.close()
 
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
@@ -243,9 +249,35 @@ def logout():
     session.logged_in=False
     return redirect(url_for('login'))
 
+@app.route('/report_trends', methods=['GET'])
+@login_required
+def report_trends():
+    user_id = session.get('user_id')
+    conn = sqlite3.connect('reports.db')
+    cursor = conn.cursor()
+    cursor.execute('SELECT time, report_type FROM reports WHERE user_id = ?', (user_id,))
+    reports = cursor.fetchall()
+    conn.close()
+
+    # Process the data to extract the trends
+    trends = {}
+    for report in reports:
+        time, report_type = report
+        date = datetime.strptime(time, '%Y-%m-%dT%H:%M:%S.%f')
+        date_str = date.strftime('%Y-%m-%d')
+        if report_type not in trends:
+            trends[report_type] = {}
+        if date_str not in trends[report_type]:
+            trends[report_type][date_str] = 0
+        trends[report_type][date_str] += 1
+
+    return jsonify(trends)
+
 @app.route('/test', methods=['GET', 'POST'])
 def test():
     return render_template('test.html')
+
+from sklearn.preprocessing import StandardScaler
 
 @app.route('/diabetes', methods=['GET', 'POST'])
 @login_required
@@ -263,14 +295,23 @@ def diabetes():
             'Diabetes Pedigree Function': float(request.form['DiabetesPedigreeFunction']),
             'Age': float(request.form['Age']),
         }
-        diab_prediction = diabetes_model.predict([list(labels.values())])
-        result = 'The person is diabetic' if diab_prediction[0] == 1 else 'The person is not diabetic'
-        generate_report(user_id, 'Diabetes', result, labels)
         
-        return render_template('diabetes.html', result=result)
+        # Standardize the input features
+        scaler = StandardScaler()
+        X = scaler.fit_transform([list(labels.values())])
+        
+        diab_prediction = diabetes_model.predict(X)
+        diab_probabilities = diabetes_model.predict_proba(X)
+        
+        result = 'The person is diabetic' if diab_prediction[0] == 1 else 'The person is not diabetic'
+        prob_diabetic = round(diab_probabilities[0][1] * 100, 2)
+        prob_not_diabetic = round(diab_probabilities[0][0] * 100, 2)
+        
+        generate_report(user_id, 'Diabetes', result,prob_diabetic,prob_not_diabetic, labels)
+        
+        return render_template('diabetes.html', result=result, prob_diabetic=prob_diabetic, prob_not_diabetic=prob_not_diabetic)
     
     return render_template('diabetes.html')
-
 
 
 @app.route('/heart_disease', methods=['GET', 'POST'])
@@ -278,6 +319,7 @@ def diabetes():
 def heart_disease():
     if request.method == 'POST':
         user_id = session.get('user_id')
+        
         labels = {
             'Age': float(request.form['age']),
             'Sex (1:male and 0:female)': float(request.form['sex']),
@@ -293,11 +335,17 @@ def heart_disease():
             'Major vessels colored by fluoroscopy': float(request.form['ca']),
             'Thal': float(request.form['thal']),
         }
-        heart_prediction = heart_disease_model.predict([list(labels.values())])
-        result = 'The person is having heart disease' if heart_prediction[0] == 1 else 'The person does not have any heart disease'
-        generate_report(user_id, 'Heart Disease', result, labels)
         
-        return render_template('heart_disease.html', result=result)
+        heart_prediction = heart_disease_model.predict([list(labels.values())])
+        heart_probabilities = heart_disease_model.predict_proba([list(labels.values())])
+        
+        result = 'The person is having heart disease' if heart_prediction[0] == 1 else 'The person does not have any heart disease'
+        prob_heart_disease = round(heart_probabilities[0][1] * 100, 2)
+        prob_no_heart_disease = round(heart_probabilities[0][0] * 100, 2)
+        
+        generate_report(user_id, 'Heart Disease', result, prob_heart_disease, prob_no_heart_disease,labels)
+        
+        return render_template('heart_disease.html', result=result, prob_heart_disease=prob_heart_disease, prob_no_heart_disease=prob_no_heart_disease)
     
     return render_template('heart_disease.html')
 
@@ -332,14 +380,20 @@ def parkinsons():
             'Correlation dimension': float(request.form['D2']),
             'Pitch period entropy': float(request.form['PPE']),
         }
-        parkinsons_prediction = parkinsons_model.predict([[labels[field] for field in labels]])
-        result = "The person has Parkinson's disease" if parkinsons_prediction[0] == 1 else "The person does not have Parkinson's disease"
-
-        generate_report(user_id, 'Parkinsons Disease', result, labels)
         
-        return render_template('parkinsons.html', result=result)
+        parkinsons_prediction = parkinsons_model.predict([list(labels.values())])
+        parkinsons_probabilities = parkinsons_model.predict_proba([list(labels.values())])
+        
+        result = "The person has Parkinson's disease" if parkinsons_prediction[0] == 1 else "The person does not have Parkinson's disease"
+        prob_parkinsons = round(parkinsons_probabilities[0][1] * 100, 2)
+        prob_no_parkinsons = round(parkinsons_probabilities[0][0] * 100, 2)
+        
+        generate_report(user_id, 'Parkinsons Disease', result,prob_parkinsons, prob_no_parkinsons, labels)
+        
+        return render_template('parkinsons.html', result=result, prob_parkinsons=prob_parkinsons, prob_no_parkinsons=prob_no_parkinsons)
     
     return render_template('parkinsons.html')
+
 
 @app.route('/symptoms', methods=['GET', 'POST'])
 @login_required
@@ -373,7 +427,7 @@ def symptoms():
                 description = "Disease description not available because the disease cannot be identified."
             descriptions_list.append(description)
 
-        generate_report(session['user_id'], 'Symptom Analysis', ', '.join(predicted_disease_names), {k: v for k, v in selected_symptoms})
+        generate_report(session['user_id'], 'Symptom Analysis', ', '.join(predicted_disease_names), 0, 0, {k: v for k,v in selected_symptoms})
 
         return render_template('symptoms.html', selected_symptoms=[symptom for symptom, _ in top_17_symptoms], predicted_diseases=predicted_disease_names, precautions=precautions_list, descriptions=descriptions_list)
 
