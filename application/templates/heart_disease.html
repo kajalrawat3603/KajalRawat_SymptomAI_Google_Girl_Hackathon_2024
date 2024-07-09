@@ -66,6 +66,8 @@
 </div>
 {% if result %}
 <div class="result-container" style="margin-top: 20px; text-align: center;">
+    <p>Probability of having heart-disease: {{ prob_heart_disease }}%</p>
+    <p>Probability of not having heart-disease: {{ prob_no_heart_disease }}%</p>
     <p class="result-text">{{ result }}</p>
 </div>
 {% endif %}

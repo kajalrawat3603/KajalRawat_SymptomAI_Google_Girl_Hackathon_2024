@@ -6,6 +6,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SymptomAI</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 
 <body>
@@ -21,7 +22,7 @@
     <div id="about">
         <div class="show">
             <div class="desc" style="margin-bottom: 30px;">
-                <h2 class="roboto-mono">About SymptomAI</h2>
+                <h2 class="roboto-mono" style="text-align: end; display: block;">About SymptomAI</h2>
                 <h2 style="font-weight: 100; color: #333; font-size: 20px; margin-bottom: 10px;">Welcome to SymptomAI,
                     where we use advanced AI to help you manage your health. Our goal is to provide accurate disease
                     predictions based on your symptoms, helping you make informed health decisions.</h2>
@@ -59,7 +60,89 @@
             </div>
         </div>
     </div>
-    <div class="d-flex justify-content-center mt-4"></div>
+    <div id="trends" style="display: none; text-align: center;">
+        <h1 class="roboto-mono">Report Trends Over Time</h1>
+        <canvas id="trendsChart" height="200" style="background: rgba(245, 245, 245, 0.664); width: 50%; margin: 30px;"></canvas>
+    </div>
+    {% if session['user_id'] %}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+    fetch('/report_trends')
+        .then(response => response.json())
+        .then(data => {
+            console.log('Fetched data:', data);
+            const trendsDiv = document.getElementById('trends');
+            trendsDiv.style.display = 'block';
+            const ctx = document.getElementById('trendsChart').getContext('2d');
+            // Collect all unique dates
+            const labels = Array.from(new Set([
+                ...Object.keys(data.Diabetes || {}),
+                ...Object.keys(data['Symptom Analysis'] || {}),
+                ...Object.keys(data['Heart Disease'] || {}),
+                ...Object.keys(data.Parkinsons || {})
+            ])).sort();
+
+            // Map data for each report type
+            const diabetesData = labels.map(date => (data.Diabetes || {})[date] || 0);
+            const symptomAnalysisData = labels.map(date => (data['Symptom Analysis'] || {})[date] || 0);
+            const heartDiseaseData = labels.map(date => (data['Heart Disease'] || {})[date] || 0);
+            const parkinsonsData = labels.map(date => (data.Parkinsons || {})[date] || 0);
+
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        {
+                            label: 'Diabetes Reports',
+                            data: diabetesData,
+                            borderColor: 'black',
+                            fill: false,
+                        },
+                        {
+                            label: 'Symptom Analysis Reports',
+                            data: symptomAnalysisData,
+                            borderColor: 'rgba(54, 162, 235, 1)',
+                            fill: false,
+                        },
+                        {
+                            label: 'Heart Disease Reports',
+                            data: heartDiseaseData,
+                            borderColor: 'red',
+                            fill: false,
+                        },
+                        {
+                            label: 'Parkinsons Reports',
+                            data: parkinsonsData,
+                            borderColor: 'green',
+                            fill: false,
+                        }
+                    ]
+                },
+                options: {
+                    scales: {
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Date'
+                            }
+                        },
+                        y: {
+                            title: {
+                                display: true,
+                                text: 'Number of Reports'
+                            }
+                        }
+                    }
+                }
+            });
+        })
+        .catch(error => {
+            console.error('Error fetching data:', error);
+        });
+});
+    </script>
+     {% endif %}
     {% endblock %}
 </body>
 
