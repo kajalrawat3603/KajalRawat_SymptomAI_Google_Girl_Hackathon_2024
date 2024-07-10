@@ -1,0 +1,8 @@
+[build]
+  command = "pip install -r requirements.txt && python run.py"
+  publish = "application/templates"
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
