@@ -60,9 +60,11 @@
             </div>
         </div>
     </div>
-    <div id="trends" style="display: none; text-align: center;">
+    <div id="trends" style="display: none; text-align: center; margin-bottom: 30px;">
         <h1 class="roboto-mono">Report Trends Over Time</h1>
         <canvas id="trendsChart" height="200" style="background: rgba(245, 245, 245, 0.664); width: 50%; margin: 30px;"></canvas>
+        <button><a href="\reports"
+            style="color: white; text-decoration: none;">Reports</a></button>
     </div>
     {% if session['user_id'] %}
     <script>
@@ -74,20 +76,16 @@
             const trendsDiv = document.getElementById('trends');
             trendsDiv.style.display = 'block';
             const ctx = document.getElementById('trendsChart').getContext('2d');
-            // Collect all unique dates
             const labels = Array.from(new Set([
                 ...Object.keys(data.Diabetes || {}),
                 ...Object.keys(data['Symptom Analysis'] || {}),
                 ...Object.keys(data['Heart Disease'] || {}),
                 ...Object.keys(data.Parkinsons || {})
             ])).sort();
-
-            // Map data for each report type
             const diabetesData = labels.map(date => (data.Diabetes || {})[date] || 0);
             const symptomAnalysisData = labels.map(date => (data['Symptom Analysis'] || {})[date] || 0);
             const heartDiseaseData = labels.map(date => (data['Heart Disease'] || {})[date] || 0);
             const parkinsonsData = labels.map(date => (data.Parkinsons || {})[date] || 0);
-
             new Chart(ctx, {
                 type: 'line',
                 data: {
@@ -102,7 +100,7 @@
                         {
                             label: 'Symptom Analysis Reports',
                             data: symptomAnalysisData,
-                            borderColor: 'rgba(54, 162, 235, 1)',
+                            borderColor: 'blue',
                             fill: false,
                         },
                         {

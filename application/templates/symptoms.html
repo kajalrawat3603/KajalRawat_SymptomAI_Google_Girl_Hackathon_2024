@@ -227,15 +227,13 @@
             }
             return true;
         }
-
-
+        
         function resetForm() {
             var form = document.getElementById("symptoms-form");
             var checkboxes = form.querySelectorAll('input[type="checkbox"]');
             checkboxes.forEach(function (checkbox) {
                 checkbox.checked = false;
             });
-
             document.getElementById("result_container").style.display = "none";
         }
     </script>

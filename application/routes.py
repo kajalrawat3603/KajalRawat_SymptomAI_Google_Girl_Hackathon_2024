@@ -1,7 +1,5 @@
-import io
 import re
 from flask import render_template, flash, request, redirect, url_for, send_file, session,jsonify
-from werkzeug.utils import secure_filename
 import os
 import secrets
 import sqlite3
@@ -10,7 +8,6 @@ from fpdf import FPDF
 import pandas as pd
 from joblib import load
 from sklearn.preprocessing import LabelEncoder
-import pickle
 from functools import wraps
 from io import BytesIO
 from application import app
@@ -19,11 +16,15 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from reportlab.lib.pagesizes import letter
 from reportlab.pdfgen import canvas
 from io import BytesIO
+from dotenv import load_dotenv
+import os
 
-secret_key = secrets.token_hex(16)
+load_dotenv()
 
-print("Generated Secret Key:", secret_key)
+secret_key = os.getenv('SECRET_KEY')
+
 app.secret_key = secret_key
+
 
 @app.before_request
 def before_request():
@@ -48,6 +49,20 @@ def create_users_db():
     ''')
     conn.commit()
     conn.close()
+    
+'''
+def user_reports():
+    conn =sqlite3.connect('reports.db')
+    sql=conn.cursor()
+    reports=sql.execute('
+        Select * from reports;
+    ').fetchall()
+
+    for r in reports:
+        print(r)
+
+user_reports()
+'''
 
 # Function to create or connect to the reports database
 def create_reports_db():
@@ -81,8 +96,7 @@ def insert_report(user_id, report_type, report_data):
     conn = sqlite3.connect('reports.db')
     cursor = conn.cursor()
     current_datetime = datetime.now().isoformat()
-    cursor.execute('INSERT INTO reports (user_id, report_type, report_data, time) VALUES (?, ?, ?, ?)',
-                   (user_id, report_type, report_data, current_datetime))
+    cursor.execute('INSERT INTO reports (user_id, report_type, report_data, time) VALUES (?, ?, ?, ?)',(user_id, report_type, report_data, current_datetime))
     conn.commit()
     conn.close()
 
@@ -158,14 +172,13 @@ def login_required(f):
 # Load machine learning models and data
 diabetes_model = load("application/Models/diabetes_model.joblib")
 heart_disease_model = load(open("application/Models/heart_disease_model.joblib", "rb"))
-parkinsons_model = pickle.load(open("application/Models/parkinsons_model.joblib", "rb"))
+parkinsons_model = load(open("application/Models/parkinsons_model.joblib", "rb"))
 svm_model = load('application/Models/disease_symptom.joblib')
 df_precautions = pd.read_csv('application/Datasets/symptom/symptom_precaution.csv')
 df_description = pd.read_csv('application/Datasets/symptom/symptom_Description.csv')
 df_severity = pd.read_csv('application/Datasets/symptom/symptom_severity.csv')
 label_encoder = LabelEncoder()
 label_encoder.fit(df_precautions['Disease'])
-
 
 
 @app.route('/signup', methods=['GET', 'POST'])
@@ -441,7 +454,6 @@ def reset_symptoms():
     descriptions = []
     return render_template('symptoms.html', predicted_diseases=predicted_diseases, precautions=precautions, descriptions=descriptions)
 
-# Routes for user reports and report downloads
 @app.route('/reports')
 @login_required
 def user_reports():
