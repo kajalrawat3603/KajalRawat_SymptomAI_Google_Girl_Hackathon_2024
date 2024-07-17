@@ -8,8 +8,11 @@ This web application helps users to predict potential diseases based on symptoms
 - **Disease prediction:** Users can input symptoms, and the application predicts potential diseases.
 - **Disease-specific diagnosis:** The application provides detailed information about predicted diseases, including descriptions and precautions.
 - **Disease-specific tests:** Users can take specific tests for diseases like diabetes, heart disease, and Parkinson's disease to get more accurate predictions.
-- **Report generation:** Generate reports summarizing disease predictions and precautions also Download these reports for personal records or further consultation.
+- **Report generation:** Generate reports summarizing disease predictions and precautions. Download these reports for personal records or further consultation.
 
+## Live Demo
+
+Access the application at [https://symptomai.onrender.com](https://symptomai.onrender.com).
 
 ## Technologies Used
 
@@ -34,13 +37,13 @@ This web application helps users to predict potential diseases based on symptoms
 1. Clone the repository to your local machine:
 
     ```bash
-    git clone https://github.com/kajalrawat3603/KajalRawat_SymptomAI_Google_Girl_Hackathon_2024.git
+    git clone https://github.com/kajalrawat3603/SymptomAI.git
     ```
 
 2. Navigate to the project directory:
 
     ```bash
-    cd KajalRawat_SymptomAI_Google_Girl_Hackathon_2024
+    cd SymptomAI
     ```
 
 3. Install the required dependencies using pip:
@@ -64,4 +67,4 @@ This web application helps users to predict potential diseases based on symptoms
 3. Input symptoms and submit to get disease predictions.
 4. Explore the details of predicted diseases, including descriptions and precautions.
 5. Optionally, take specific tests for diseases for more accurate predictions.
-6. Generate reports summarizing disease predictions and precautions also Download these reports for personal records or further consultation.
+6. Generate reports summarizing disease predictions and precautions. Download these reports for personal records or further consultation.
